@@ -1,0 +1,27 @@
+import Header from '../components/Header.jsx'
+import Hero from '../components/Hero.jsx'
+import About from '../components/About.jsx'
+import Program from '../components/Program.jsx'
+import Audience from '../components/Audience.jsx'
+import Pricing from '../components/Pricing.jsx'
+import Testimonials from '../components/Testimonials.jsx'
+import FAQ from '../components/FAQ.jsx'
+import Footer from '../components/Footer.jsx'
+
+export default function Home() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">
+        <Hero />
+        <About />
+        <Program />
+        <Audience />
+        <Pricing />
+        <Testimonials />
+        <FAQ />
+      </main>
+      <Footer />
+    </div>
+  )
+}

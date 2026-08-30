@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Oswald", "Segoe UI", sans-serif;
+  --font-sans: "Manrope", "Segoe UI", sans-serif;
+
+  --color-bg: #0a0a0a;
+  --color-bg-alt: #121214;
+  --color-surface: #17171a;
+  --color-surface-2: #1e1e22;
+  --color-border: #2b2b30;
+  --color-chrome: #c9cdd3;
+  --color-chrome-dark: #6b6f76;
+  --color-accent: #b5222c;
+  --color-accent-dark: #7d1620;
+  --color-accent-light: #e0454f;
+  --color-text: #e9e9ec;
+  --color-text-muted: #9a9aa2;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+.text-gradient-chrome {
+  background: linear-gradient(180deg, #ffffff 0%, #c9cdd3 45%, #6b6f76 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-accent {
+  background: linear-gradient(90deg, #e0454f 0%, #b5222c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.diagonal-stripe {
+  background: linear-gradient(135deg, transparent 48%, var(--color-accent) 48%, var(--color-accent-dark) 52%, transparent 52%);
+}
+
+.btn-accent {
+  background: linear-gradient(180deg, #d92d38 0%, #9c1c26 100%);
+  box-shadow: 0 4px 24px rgba(181, 34, 44, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.btn-accent:hover {
+  background: linear-gradient(180deg, #e0454f 0%, #b5222c 100%);
+  box-shadow: 0 6px 32px rgba(181, 34, 44, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.card-surface {
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-bg-alt) 100%);
+  border: 1px solid var(--color-border);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-2);
+  border-radius: 6px;
+}
