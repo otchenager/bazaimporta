@@ -20,7 +20,7 @@ export default function PricingSection() {
               key={t.id}
               className={`rounded-2xl p-8 flex flex-col relative ${
                 t.highlighted
-                  ? 'card-surface border-accent/60 shadow-[0_0_40px_rgba(181,34,44,0.15)]'
+                  ? 'card-surface border-accent/60 shadow-[0_0_40px_rgba(255,106,0,0.15)]'
                   : 'card-surface'
               }`}
             >

@@ -10,8 +10,8 @@ export default function Logo({ className = '', showTagline = true }) {
             <stop offset="100%" stopColor="#e7e9ec" />
           </linearGradient>
           <linearGradient id="stripeGrad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#e0454f" />
-            <stop offset="100%" stopColor="#7d1620" />
+            <stop offset="0%" stopColor="#ff8a3d" />
+            <stop offset="100%" stopColor="#a83d00" />
           </linearGradient>
           <clipPath id="badgeClip">
             <rect x="1" y="1" width="42" height="42" rx="9" />

@@ -12,9 +12,9 @@
   --color-border: #2b2b30;
   --color-chrome: #c9cdd3;
   --color-chrome-dark: #6b6f76;
-  --color-accent: #b5222c;
-  --color-accent-dark: #7d1620;
-  --color-accent-light: #e0454f;
+  --color-accent: #ff6a00;
+  --color-accent-dark: #a83d00;
+  --color-accent-light: #ff8a3d;
   --color-text: #e9e9ec;
   --color-text-muted: #9a9aa2;
 }
@@ -45,7 +45,7 @@ h1, h2, h3, h4 {
 }
 
 .text-gradient-accent {
-  background: linear-gradient(90deg, #e0454f 0%, #b5222c 100%);
+  background: linear-gradient(90deg, #ff8a3d 0%, #ff6a00 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -56,13 +56,13 @@ h1, h2, h3, h4 {
 }
 
 .btn-accent {
-  background: linear-gradient(180deg, #d92d38 0%, #9c1c26 100%);
-  box-shadow: 0 4px 24px rgba(181, 34, 44, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+  background: linear-gradient(180deg, #f2650a 0%, #a83d00 100%);
+  box-shadow: 0 4px 24px rgba(255, 106, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
 .btn-accent:hover {
-  background: linear-gradient(180deg, #e0454f 0%, #b5222c 100%);
-  box-shadow: 0 6px 32px rgba(181, 34, 44, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  background: linear-gradient(180deg, #ff8a3d 0%, #ff6a00 100%);
+  box-shadow: 0 6px 32px rgba(255, 106, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
 .card-surface {
