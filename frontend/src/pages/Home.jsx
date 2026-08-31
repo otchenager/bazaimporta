@@ -3,6 +3,7 @@ import Hero from '../components/Hero.jsx'
 import About from '../components/About.jsx'
 import Program from '../components/Program.jsx'
 import Audience from '../components/Audience.jsx'
+import Gallery from '../components/Gallery.jsx'
 import Testimonials from '../components/Testimonials.jsx'
 import FAQ from '../components/FAQ.jsx'
 import Footer from '../components/Footer.jsx'
@@ -16,6 +17,7 @@ export default function Home() {
         <About />
         <Program />
         <Audience />
+        <Gallery />
         <Testimonials />
         <FAQ />
       </main>
