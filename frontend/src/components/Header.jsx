@@ -10,7 +10,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-bg/85 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 h-20 flex items-center justify-between">
-        <a href="/" aria-label="AJ import — на главную">
+        <a href="/" aria-label="BAZA Import — на главную">
           <Logo />
         </a>
         <nav className="flex items-center gap-3 sm:gap-5">

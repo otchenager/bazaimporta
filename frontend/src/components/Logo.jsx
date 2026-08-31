@@ -19,10 +19,10 @@ export default function Logo({ className = '', showTagline = true }) {
         </defs>
         <rect x="1" y="1" width="42" height="42" rx="9" fill="#0a0a0a" stroke="url(#chromeGrad)" strokeWidth="1.5" />
         <path d="M0 30 L30 0 L38 0 L8 44 L0 44 Z" fill="url(#stripeGrad)" clipPath="url(#badgeClip)" />
-        <text x="22" y="30" textAnchor="middle" fontFamily="Oswald, sans-serif" fontWeight="700" fontSize="20" fill="url(#chromeGrad)">AJ</text>
+        <text x="22" y="30" textAnchor="middle" fontFamily="Oswald, sans-serif" fontWeight="700" fontSize="20" fill="url(#chromeGrad)">BI</text>
       </svg>
       <div className="flex flex-col items-start leading-none">
-        <span className="font-display text-xl tracking-wide text-gradient-chrome font-semibold">AJ import</span>
+        <span className="font-display text-xl tracking-wide text-gradient-chrome font-semibold">BAZA Import</span>
         {showTagline && (
           <span className="text-[10px] tracking-[0.25em] text-text-muted uppercase font-sans mt-0.5">Korea · China · Japan</span>
         )}

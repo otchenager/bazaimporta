@@ -87,7 +87,7 @@ export default function Payment() {
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-border">
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-20 flex items-center">
-          <Link to="/" aria-label="AJ import — на главную">
+          <Link to="/" aria-label="BAZA Import — на главную">
             <Logo />
           </Link>
         </div>

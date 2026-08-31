@@ -15,7 +15,7 @@ export default function Footer() {
           </a>
         </div>
         <p className="normal-case text-xs text-text-muted font-sans">
-          &copy; {new Date().getFullYear()} AJ import. Все права защищены.
+          &copy; {new Date().getFullYear()} BAZA Import. Все права защищены.
         </p>
       </div>
     </footer>

@@ -1,6 +1,6 @@
-# AJ import — frontend
+# BAZA Import — frontend
 
-Лендинг для продажи доступа к закрытому Telegram-каналу AJ import.
+Лендинг закрытого Telegram-канала BAZA Import.
 
 Стек: React + Vite + Tailwind CSS v4, React Router.
 
