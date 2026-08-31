@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom'
 import { TARIFFS, formatPrice } from '../config/tariffs.js'
 
-export default function Pricing() {
+// Not currently rendered on the page — funnel routes through the free
+// Telegram channel instead of direct payment. Kept for the next stage
+// when paid-channel sales resume. See Home.jsx.
+export default function PricingSection() {
   const navigate = useNavigate()
 
   return (
