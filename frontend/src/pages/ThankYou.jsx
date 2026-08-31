@@ -17,7 +17,7 @@ export default function ThankYou() {
       </div>
       <div className="flex flex-col sm:flex-row gap-4">
         <a
-          href={SOCIALS.telegram}
+          href={SOCIALS.channel}
           target="_blank"
           rel="noopener noreferrer"
           className="btn-accent text-white font-display uppercase tracking-wide px-8 py-3 rounded-lg transition-all"
