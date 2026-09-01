@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="c" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="35%" stop-color="#c9cdd3" />
+      <stop offset="65%" stop-color="#8a8e96" />
+      <stop offset="100%" stop-color="#e7e9ec" />
+    </linearGradient>
+    <linearGradient id="s" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ff8a3d" />
+      <stop offset="100%" stop-color="#a83d00" />
+    </linearGradient>
+    <clipPath id="clip">
+      <rect x="2" y="2" width="60" height="60" rx="14" />
+    </clipPath>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0a0a0a" stroke="url(#c)" stroke-width="2" />
+  <path d="M0 42 L42 0 L54 0 L12 64 L0 64 Z" fill="url(#s)" clip-path="url(#clip)" />
+  <text x="32" y="42" text-anchor="middle" font-family="Oswald, sans-serif" font-weight="700" font-size="26" fill="url(#c)">BI</text>
+</svg>
