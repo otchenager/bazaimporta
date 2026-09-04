@@ -10,9 +10,6 @@ export default function Footer() {
           <a href={SOCIALS.channel} target="_blank" rel="noopener noreferrer" className="text-sm text-text-muted hover:text-chrome transition-colors">
             Наш канал
           </a>
-          <a href={SOCIALS.instagram} target="_blank" rel="noopener noreferrer" className="text-sm text-text-muted hover:text-chrome transition-colors">
-            Instagram
-          </a>
         </div>
         <p className="normal-case text-xs text-text-muted font-sans">
           &copy; {new Date().getFullYear()} BAZA Import. Все права защищены.

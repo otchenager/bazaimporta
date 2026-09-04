@@ -6,8 +6,10 @@ import Audience from '../components/Audience.jsx'
 import Gallery from '../components/Gallery.jsx'
 import Comparison from '../components/Comparison.jsx'
 import PaidChannel from '../components/PaidChannel.jsx'
-import Testimonials from '../components/Testimonials.jsx'
+// Отзывы отключены — нет контента
+// import Testimonials from '../components/Testimonials.jsx'
 import FAQ from '../components/FAQ.jsx'
+import Contacts from '../components/Contacts.jsx'
 import Footer from '../components/Footer.jsx'
 
 export default function Home() {
@@ -22,8 +24,10 @@ export default function Home() {
         <Gallery />
         <Comparison />
         <PaidChannel />
-        <Testimonials />
+        {/* Отзывы отключены — нет контента */}
+        {/* <Testimonials /> */}
         <FAQ />
+        <Contacts />
       </main>
       <Footer />
     </div>
