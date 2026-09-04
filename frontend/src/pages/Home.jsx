@@ -1,10 +1,10 @@
 import Header from '../components/Header.jsx'
 import Hero from '../components/Hero.jsx'
-import About from '../components/About.jsx'
 import Program from '../components/Program.jsx'
 import Audience from '../components/Audience.jsx'
 import Gallery from '../components/Gallery.jsx'
 import Comparison from '../components/Comparison.jsx'
+import About from '../components/About.jsx'
 import PaidChannel from '../components/PaidChannel.jsx'
 // Отзывы отключены — нет контента
 // import Testimonials from '../components/Testimonials.jsx'
@@ -18,11 +18,11 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <Hero />
-        <About />
         <Program />
         <Audience />
         <Gallery />
         <Comparison />
+        <About />
         <PaidChannel />
         {/* Отзывы отключены — нет контента */}
         {/* <Testimonials /> */}
