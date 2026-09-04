@@ -26,8 +26,8 @@ const MODULES = [
   },
   {
     n: '06',
-    title: 'Продажа',
-    desc: 'Как быстро и выгодно продать авто в России, если решите не оставлять его себе.',
+    title: 'Поиск клиента',
+    desc: 'Как относительно быстро найти клиента и совершить первую продажу.',
   },
 ]
 
@@ -37,7 +37,7 @@ export default function Program() {
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
         <div className="text-center mb-14">
           <span className="text-xs tracking-[0.3em] uppercase text-accent-light font-semibold">Программа</span>
-          <h2 className="text-3xl sm:text-4xl mt-3 text-gradient-chrome">Путь от нуля до своей машины</h2>
+          <h2 className="text-3xl sm:text-4xl mt-3 text-gradient-chrome">Путь от нуля до первого клиента</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {MODULES.map((m) => (
