@@ -22,7 +22,7 @@ function toItems(modules, type) {
     .map((path) => ({ type, src: modules[path] }))
 }
 
-const MEDIA_ITEMS = [...toItems(photoModules, 'image'), ...toItems(videoModules, 'video')]
+const MEDIA_ITEMS = [...toItems(videoModules, 'video'), ...toItems(photoModules, 'image')]
 
 export default function Gallery() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'start' }, [
