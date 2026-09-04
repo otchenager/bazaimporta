@@ -2,7 +2,7 @@ import { SOCIALS } from '../config/socials.js'
 
 export default function Contacts() {
   return (
-    <section className="border-b border-border bg-bg-alt">
+    <section className="border-b border-border">
       <div className="max-w-4xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
         <div className="text-center mb-14">
           <span className="text-xs tracking-[0.3em] uppercase text-accent-light font-semibold">Контакты</span>

@@ -4,15 +4,10 @@ import { LEGAL } from '../config/legal.js'
 export default function Footer() {
   return (
     <footer className="bg-bg">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
         <Logo showTagline={false} />
-        <p className="normal-case text-xs text-text-muted font-sans">
-          &copy; {new Date().getFullYear()} BAZA Import. Все права защищены.
-        </p>
-      </div>
 
-      <div className="border-t border-border">
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-6">
+        <div className="text-center sm:text-left">
           <p className="normal-case text-xs text-accent-light font-sans font-semibold mb-2">
             Работаем официально
           </p>
@@ -33,6 +28,10 @@ export default function Footer() {
             </a>
           </p>
         </div>
+
+        <p className="normal-case text-xs text-text-muted font-sans">
+          &copy; {new Date().getFullYear()} BAZA Import. Все права защищены.
+        </p>
       </div>
     </footer>
   )

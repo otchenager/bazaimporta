@@ -23,7 +23,7 @@ const FEATURES = [
 
 export default function About() {
   return (
-    <section className="border-b border-border">
+    <section className="border-b border-border bg-bg-alt">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
         <div className="text-center mb-14">
           <span className="text-xs tracking-[0.3em] uppercase text-accent-light font-semibold">Бесплатный канал</span>
