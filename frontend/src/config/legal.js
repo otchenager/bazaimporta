@@ -6,5 +6,7 @@ export const LEGAL = {
   phone: '+7 968 399-39-06',
   phoneHref: 'tel:+79683993906',
   email: 'kirillmalinov2001@gmail.com',
+  supportTelegram: '@visagevvvv',
+  supportTelegramUrl: 'https://t.me/visagevvvv',
   offerUrl: '/oferta.docx',
 }
