@@ -11,13 +11,12 @@ export default function Hero() {
 
       <div className="relative max-w-5xl mx-auto px-5 sm:px-8 py-24 sm:py-32 text-center">
         <span className="inline-block text-xs sm:text-sm tracking-[0.3em] uppercase text-accent-light font-semibold mb-6">
-          Закрытый Telegram-канал
-        </span>
+          Сообщество автобизнеса        </span>
         <h1 className="text-4xl sm:text-6xl leading-[1.05] font-bold text-gradient-chrome mb-6">
-          Привези свою первую машину из Кореи / Китая / Японии без переплат и ошибок
+          Твой путь в автоимпорт начинается здесь
         </h1>
         <p className="normal-case text-base sm:text-xl text-text-muted max-w-2xl mx-auto mb-10 font-sans">
-          Пошаговая система от импортёра с 90+ машинами и Lamborghini за плечами
+          Пошаговая система от поставщика с 200+ машинами и Lamborghini за плечами
         </p>
         <a
           href={SOCIALS.channel}

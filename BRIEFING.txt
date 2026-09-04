@@ -1,0 +1,75 @@
+AJ import — брифинг по деплою (на 2026-08-30)
+================================================
+
+ПРОЕКТ
+------
+Лендинг + приём оплаты доступа к закрытому Telegram-каналу по импорту
+автомобилей из Кореи/Китая/Японии. Репозиторий: эта папка (локальный git,
+без remote). Весь код закоммичен — 4 коммита в истории.
+
+СДЕЛАНО
+-------
+- Frontend полностью готов и УЖЕ В ПРОДЕ:
+  https://aj-import-frontend.vercel.app
+  (аккаунт Vercel: otchenager, команда otchenagers-projects,
+  проект слинкован через frontend/.vercel/project.json)
+
+- Backend полностью написан (папка backend/), протестирован локально:
+  создание заказа Prodamus, проверка HMAC-подписи вебхука, CORS,
+  fallback-логирование в backend/logs/failed-notifications.log.
+  ЕЩЁ НЕ ЗАДЕПЛОЕН.
+
+БЛОКЕР
+------
+Railway CLI установлен и авторизован (аккаунт: al, nagorniyai3@gmail.com),
+но `railway init` упал с ошибкой:
+  "Your trial has expired. Please select a plan to continue using Railway."
+Пользователь сказал, что оплатит инвойс — на этом остановились.
+
+ЧТО ДЕЛАТЬ ДАЛЬШЕ (по порядку)
+-------------------------------
+1. Проверить, оплачен ли план Railway (railway.com/account/plans), затем
+   повторить из папки backend/:
+     railway init --name aj-import-backend
+
+2. Задеплоить backend:
+     railway up
+
+3. Задать переменные окружения на Railway (см. backend/.env.example):
+     PRODAMUS_SHOP_ID=
+     PRODAMUS_SECRET_KEY=
+     PRODAMUS_TEST_MODE=
+     TELEGRAM_BOT_TOKEN=
+     TELEGRAM_ADMIN_CHAT_ID=
+     FRONTEND_URL=https://aj-import-frontend.vercel.app
+     CORS_ORIGIN=https://aj-import-frontend.vercel.app
+
+4. Взять публичный URL backend-сервиса на Railway.
+
+5. Обновить переменную VITE_API_URL на фронтенде в Vercel (значением
+   URL из шага 4) и передеплоить фронтенд:
+     cd frontend
+     vercel --prod
+
+6. В личном кабинете Prodamus указать адрес вебхука:
+     {railway-url}/webhook/prodamus
+
+7. ВАЖНО: названия полей вебхука (payment_status, sum, customer_email,
+   customer_extra, signature) в backend/routes/webhook.js и алгоритм
+   подписи в backend/utils/prodamus.js реализованы по публичной
+   документации Prodamus, но НЕ сверены с реальным форматом уведомлений
+   конкретного аккаунта. Перед боевым запуском — сделать тестовый платёж
+   (demo_mode=1) и свериться с фактическим payload, при расхождении
+   подправить эти два файла.
+
+8. Прогнать сквозной тест: форма оплаты на лендинге → редирект на
+   Prodamus → вебхук → уведомление в Telegram (или запись в
+   failed-notifications.log, если TELEGRAM_BOT_TOKEN не настроен).
+
+АККАУНТЫ
+--------
+Vercel:  otchenager (команда otchenagers-projects)
+Railway: al, nagorniyai3@gmail.com
+
+Чтобы продолжить в следующей сессии — просто скажи Claude Code
+"продолжаем деплой", он подхватит контекст с шага 1.

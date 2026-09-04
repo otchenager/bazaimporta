@@ -9,14 +9,7 @@ export default function Header() {
           <Logo />
         </a>
         <nav className="flex items-center gap-3 sm:gap-5">
-          <a
-            href={SOCIALS.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden sm:inline-block text-sm text-text-muted hover:text-chrome transition-colors"
-          >
-            Instagram
-          </a>
+          
           <a
             href={SOCIALS.channel}
             target="_blank"
