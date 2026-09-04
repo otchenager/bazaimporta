@@ -4,6 +4,7 @@ import About from '../components/About.jsx'
 import Program from '../components/Program.jsx'
 import Audience from '../components/Audience.jsx'
 import Gallery from '../components/Gallery.jsx'
+import Comparison from '../components/Comparison.jsx'
 import PaidChannel from '../components/PaidChannel.jsx'
 import Testimonials from '../components/Testimonials.jsx'
 import FAQ from '../components/FAQ.jsx'
@@ -19,6 +20,7 @@ export default function Home() {
         <Program />
         <Audience />
         <Gallery />
+        <Comparison />
         <PaidChannel />
         <Testimonials />
         <FAQ />
