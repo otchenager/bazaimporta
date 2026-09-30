@@ -58,7 +58,7 @@ export default function Comparison() {
                 Узнать больше
               </a>
               <a
-                href={SOCIALS.channel}
+                href={SOCIALS.paidBot}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 text-center py-3 rounded-lg font-display uppercase tracking-wide text-sm btn-accent text-white transition-all"
