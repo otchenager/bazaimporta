@@ -1,4 +1,4 @@
-import{a as e,i as t,n,o as r,r as i,t as a}from"./index-Khd-LpU_.js";var o=`
+import{a as e,i as t,n,o as r,r as i,t as a}from"./index-t_DEM1dt.js";var o=`
 attribute vec3 a_target; attribute vec3 a_start; attribute vec2 a_meta; // meta: kind, seed
 uniform vec2 u_res; uniform vec2 u_mouse; uniform float u_time; uniform float u_progress;
 uniform float u_yaw; uniform float u_pitch; uniform float u_k; uniform float u_dpr;

@@ -28,7 +28,7 @@ ErrorDocument 403 /404.html
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
   Header always set Cross-Origin-Opener-Policy "same-origin"
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-NVAgL6ZUDAnpnozfB/8yEM3Q51wmxloP6big4N3EJAo=' https://mc.yandex.ru https://yastatic.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com; font-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru; frame-src https://mc.yandex.ru https://mc.yandex.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'sha256-p5ZpXanAv30LqU8+LucWZqCcMapjOc1Ej27dcr7Bc9g=' https://mc.yandex.ru https://yastatic.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com; font-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru; frame-src https://mc.yandex.ru https://mc.yandex.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
   Header unset X-Powered-By
 
   # Файлы с хешем в имени — навсегда; HTML — всегда свежий
