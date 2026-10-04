@@ -1,20 +1,21 @@
 import { Link } from 'react-router-dom'
 import Logo from '../components/Logo.jsx'
+import CtaButton from '../components/CtaButton.jsx'
+import CarPoster from '../visual/CarPoster.jsx'
+import { COPY, LINKS } from '../content/copy.js'
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 text-center gap-8">
-      <Logo />
-      <div>
-        <h1 className="text-3xl normal-case text-gradient-chrome mb-3">Страница не найдена</h1>
-        <p className="normal-case text-text-muted font-sans">Такой страницы не существует.</p>
-      </div>
-      <Link
-        to="/"
-        className="btn-accent text-white font-display uppercase tracking-wide px-8 py-3 rounded-lg transition-all"
-      >
-        На главную
+    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col items-start justify-center gap-8 px-4 sm:px-8">
+      <Link to="/" aria-label="BAZA Import — на главную" className="rounded">
+        <Logo />
       </Link>
-    </div>
+      <CarPoster className="w-full max-w-xl opacity-60" />
+      <h1 className="h-section">{COPY.notFound.title}</h1>
+      <div className="flex w-full flex-col gap-3 sm:flex-row">
+        <Link to="/" className="btn btn-ghost">{COPY.notFound.cta}</Link>
+        <CtaButton href={LINKS.channel} goal="cta_404">{COPY.header.cta}</CtaButton>
+      </div>
+    </main>
   )
 }

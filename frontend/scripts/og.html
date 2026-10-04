@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Шаблон OG-картинки 1200×630 для превью в Telegram. Рендер: scripts/render-og.mjs -->
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: Oswald; font-weight: 700; src: url(../node_modules/@fontsource/oswald/files/oswald-cyrillic-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: Oswald; font-weight: 700; src: url(../node_modules/@fontsource/oswald/files/oswald-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+20BD; }
+  @font-face { font-family: Manrope; font-weight: 600; src: url(../node_modules/@fontsource/manrope/files/manrope-cyrillic-600-normal.woff2) format('woff2'); }
+  @font-face { font-family: Manrope; font-weight: 600; src: url(../node_modules/@fontsource/manrope/files/manrope-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+20BD; }
+  html, body { margin: 0; width: 1200px; height: 630px; background: #0a0a0a; overflow: hidden; }
+  .photo { position: absolute; inset: 0 0 0 auto; width: 620px; background: url(og-photo.jpg) 62% 50% / cover; }
+  .photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #0a0a0a 0%, rgba(10,10,10,.55) 30%, rgba(10,10,10,0) 70%); }
+  .text { position: absolute; left: 64px; top: 64px; bottom: 64px; width: 640px; display: flex; flex-direction: column; justify-content: space-between; }
+  .mark { display: flex; align-items: center; gap: 14px; font: 700 34px Oswald; color: #ececef; letter-spacing: .02em; }
+  .mark img { width: 56px; height: 56px; }
+  h1 { margin: 0; font: 700 84px/0.95 Oswald; text-transform: uppercase; color: #ececef; }
+  h1 em { font-style: normal; color: #ff6a00; display: block; }
+  p { margin: 0; white-space: nowrap; font: 600 26px Manrope; color: #a3a3ab; }
+  p b { color: #ff6a00; }
+</style>
+</head>
+<body>
+  <div class="photo"></div>
+  <div class="text">
+    <div class="mark"><img src="../public/favicon.svg" alt="">BAZA IMPORT</div>
+    <h1>Привози авто из-за границы <em>без переплат</em></h1>
+    <p><b>0 ₽</b> вход в канал · свои поставщики</p>
+  </div>
+</body>
+</html>
