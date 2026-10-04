@@ -33,8 +33,11 @@ find_docroot() {
 inspect() {
   DOCROOT="$(find_docroot)"
   [ -n "$DOCROOT" ] || die "не нашёл папку сайта. Запустите: ls -la ~ ~/www ; и повторите с DOCROOT=/путь bash regru.sh check"
+  # реальные пути (на reg.ru ~/www часто симлинк), чтобы сравнения папок были честными
+  DOCROOT="$(cd "$DOCROOT" && pwd -P)"
   SERVED="$DOCROOT/index.html"
   TOP="$(git -C "$DOCROOT" rev-parse --show-toplevel 2>/dev/null || true)"
+  [ -z "$TOP" ] || TOP="$(cd "$TOP" && pwd -P)"
 }
 
 cmd_check() {
@@ -69,15 +72,15 @@ backup() {
 snapshot_prod_changes() {
   [ -n "$TOP" ] || return 0
   if [ -n "$(git -C "$TOP" status --porcelain)" ]; then
-    local b="prod-snapshot-$STAMP"
-    git -C "$TOP" stash push --include-untracked -m "prod changes before redesign $STAMP" >/dev/null
-    git -C "$TOP" branch "$b" >/dev/null
-    git -C "$TOP" checkout -q "$b"
-    git -C "$TOP" stash pop -q
-    git -C "$TOP" add -A
-    git -C "$TOP" -c user.name="BAZA deploy" -c user.email="deploy@bazaimporta.ru" commit -q -m "Снимок правок с прода перед редизайном ($STAMP)"
-    git -C "$TOP" checkout -q -
-    ok "правки с прода сохранены в локальной ветке $b (и в архиве)"
+    # Снимок через временный индекс: рабочие файлы (то, что сейчас отдаёт сайт) не трогаются
+    local b="prod-snapshot-$STAMP" idx tree commit
+    idx="$(git -C "$TOP" rev-parse --absolute-git-dir)/index.snapshot-$STAMP"
+    GIT_INDEX_FILE="$idx" git -C "$TOP" add -A
+    tree="$(GIT_INDEX_FILE="$idx" git -C "$TOP" write-tree)"
+    rm -f "$idx"
+    commit="$(git -C "$TOP" -c user.name="BAZA deploy" -c user.email="deploy@bazaimporta.ru"       commit-tree "$tree" -p HEAD -m "Снимок правок с прода перед редизайном ($STAMP)")"
+    git -C "$TOP" branch "$b" "$commit"
+    ok "правки с прода сохранены в локальной ветке $b (и в архиве); файлы сайта не тронуты"
   else
     ok "незакоммиченных правок на проде нет"
   fi
@@ -107,7 +110,8 @@ cmd_deploy() {
   local dist
   if [ -n "$TOP" ] && [ "$DOCROOT" = "$TOP/frontend/dist" ]; then
     git -C "$TOP" fetch -q origin "$BRANCH"
-    git -C "$TOP" checkout -q -B "$BRANCH" "origin/$BRANCH"
+    # правки прода уже в ветке prod-snapshot-* и в архиве — теперь можно заменить файлы
+    git -C "$TOP" checkout -q -f -B "$BRANCH" "origin/$BRANCH"
     dist="$DOCROOT"
     ok "репозиторий $TOP переключён на $BRANCH ($(git -C "$TOP" log --oneline -1))"
   elif [ -z "$TOP" ] || [ "$TOP" != "$DOCROOT" ]; then
