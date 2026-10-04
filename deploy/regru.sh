@@ -75,6 +75,7 @@ snapshot_prod_changes() {
     # Снимок через временный индекс: рабочие файлы (то, что сейчас отдаёт сайт) не трогаются
     local b="prod-snapshot-$STAMP" idx tree commit
     idx="$(git -C "$TOP" rev-parse --absolute-git-dir)/index.snapshot-$STAMP"
+    cp "$(git -C "$TOP" rev-parse --absolute-git-dir)/index" "$idx"
     GIT_INDEX_FILE="$idx" git -C "$TOP" add -A
     tree="$(GIT_INDEX_FILE="$idx" git -C "$TOP" write-tree)"
     rm -f "$idx"
