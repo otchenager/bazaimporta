@@ -6,7 +6,7 @@
 # Переменные: DOCROOT=/путь/к/папке/сайта (если автопоиск не нашёл), BRANCH (по умолчанию redesign).
 set -euo pipefail
 
-SITE="https://bazaimporta.ru"
+SITE="${SITE:-https://bazaimporta.ru}"
 REPO="https://github.com/otchenager/bazaimporta.git"
 BRANCH="${BRANCH:-redesign}"
 STAMP="$(date +%Y%m%d-%H%M%S)"

@@ -5,10 +5,11 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 const root = process.argv[2], port = Number(process.argv[3] || 4180);
 function readHeaders() {
-  const ht = fs.readFileSync(path.join(root, '.htaccess'), 'utf8');
+  const htPath = path.join(root, '.htaccess');
+  const ht = fs.existsSync(htPath) ? fs.readFileSync(htPath, 'utf8') : '';
   const h = {};
   for (const m of ht.matchAll(/Header always set ([\w-]+) "([^"]+)"/g)) h[m[1]] = m[2];
-  h['Content-Security-Policy'] = h['Content-Security-Policy'].replace(' upgrade-insecure-requests', '');
+  if (h['Content-Security-Policy']) h['Content-Security-Policy'] = h['Content-Security-Policy'].replace(' upgrade-insecure-requests', '');
   return h;
 }
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.woff2': 'font/woff2', '.woff': 'font/woff', '.jpg': 'image/jpeg', '.png': 'image/png', '.xml': 'application/xml', '.txt': 'text/plain' };
