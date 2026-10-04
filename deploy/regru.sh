@@ -156,7 +156,8 @@ cmd_rollback() {
   mv "$base" "$base.failed-$STAMP"
   tar xzf "$archive" -C "$(dirname "$base")"
   ok "восстановлено из $archive. Неудачная версия отложена в $base.failed-$STAMP (удалить вручную, когда убедитесь)"
-  verify || true
+  local code; code="$(curl -s -m 20 -o /dev/null -w '%{http_code}' "$SITE/")"
+  [ "$code" = 200 ] && ok "главная отвечает 200 — прежняя версия на месте" || bad "главная → $code, пришлите вывод"
 }
 
 case "${1:-}" in
