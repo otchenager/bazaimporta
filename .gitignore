@@ -15,3 +15,6 @@ node_modules/
 # Logs
 *.log
 backend/logs/*.log
+
+# Lighthouse HTML-отчёты тяжёлые — в репозиторий только сводки json
+audit/**/lighthouse-*.html
