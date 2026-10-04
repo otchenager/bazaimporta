@@ -1,37 +1,28 @@
 import Logo from './Logo.jsx'
-import { LEGAL } from '../config/legal.js'
+import { COPY, LEGAL, LINKS } from '../content/copy.js'
 
 export default function Footer() {
   return (
-    <footer className="bg-bg">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-12 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6">
-        <Logo showTagline={false} />
-
-        <div className="text-center sm:text-left">
-          <p className="normal-case text-xs text-accent-light font-sans font-semibold mb-2">
-            Работаем официально
+    <footer className="border-t border-line bg-bg pb-28 md:pb-0">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-8 md:grid-cols-[auto_1fr_auto] md:items-start">
+        <Logo />
+        <div className="text-sm leading-relaxed text-muted">
+          <p className="mb-1 font-semibold text-text">{COPY.footer.official}</p>
+          <p>
+            {LEGAL.entityName} · ИНН {LEGAL.inn} · ОГРНИП {LEGAL.ogrnip}
           </p>
-          <p className="normal-case text-xs text-text-muted font-sans leading-relaxed">
-            {LEGAL.entityName} &middot; ИНН {LEGAL.inn} &middot; ОГРНИП {LEGAL.ogrnip}
-            <br className="sm:hidden" />
-            <span className="hidden sm:inline"> &middot; </span>
-            <a href={LEGAL.phoneHref} className="hover:text-chrome transition-colors">{LEGAL.phone}</a>
-            <span> &middot; </span>
-            <a href={`mailto:${LEGAL.email}`} className="hover:text-chrome transition-colors">{LEGAL.email}</a>
-            <span> &middot; </span>
-            <a href={LEGAL.supportTelegramUrl} target="_blank" rel="noopener noreferrer" className="hover:text-chrome transition-colors">
-              Тех. поддержка: {LEGAL.supportTelegram}
+          <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+            <a className="underline-offset-4 hover:text-text hover:underline" href={LEGAL.phoneHref}>{LEGAL.phone}</a>
+            <a className="underline-offset-4 hover:text-text hover:underline" href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>
+            <a className="underline-offset-4 hover:text-text hover:underline" href={LINKS.support} target="_blank" rel="noopener">
+              {COPY.footer.support}: {LEGAL.supportTelegram}
             </a>
-            <span> &middot; </span>
-            <a href={LEGAL.offerUrl} target="_blank" rel="noopener noreferrer" className="hover:text-chrome transition-colors underline underline-offset-2">
-              Публичная оферта
+            <a className="underline underline-offset-4 hover:text-text" href={LINKS.offer} target="_blank" rel="noopener">
+              {COPY.footer.offer}
             </a>
           </p>
         </div>
-
-        <p className="normal-case text-xs text-text-muted font-sans">
-          &copy; {new Date().getFullYear()} BAZA Import. Все права защищены.
-        </p>
+        <p className="text-sm text-muted">© {new Date().getFullYear()} {COPY.footer.rights}</p>
       </div>
     </footer>
   )

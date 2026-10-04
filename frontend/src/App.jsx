@@ -1,17 +1,23 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home.jsx'
+import Landing from './pages/Landing.jsx'
 import ThankYou from './pages/ThankYou.jsx'
 import NotFound from './pages/NotFound.jsx'
+import { TRACKS } from './content/tracks.js'
 
-// Payment.jsx (/payment) is intentionally excluded from routing — the
-// funnel currently sends users to the free Telegram channel instead of
-// direct payment. The page and backend order/webhook flow stay in the
-// codebase for when paid-channel sales resume.
+// Оплата идёт через бота @bazaimporta_bot (Robokassa), поэтому страницы /payment нет.
 export default function App() {
+  // Эффект родителя срабатывает после эффектов детей: Reveal уже отметил видимое — теперь можно включить анимации
+  useEffect(() => {
+    document.documentElement.classList.add('js')
+  }, [])
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/thank-you" element={<ThankYou />} />
+      <Route path="/" element={<Landing />} />
+      {TRACKS.map((t) => (
+        <Route key={t.id} path={t.slug} element={<Landing />} />
+      ))}
+      <Route path="/thank-you/" element={<ThankYou />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

@@ -1,0 +1,54 @@
+# BAZA Import — статика на Apache (reg.ru). Хеши инлайн-скриптов в CSP подставляет scripts/prerender.mjs.
+
+Options -Indexes -MultiViews
+DirectoryIndex index.html
+AddDefaultCharset UTF-8
+ErrorDocument 404 /404.html
+ErrorDocument 403 /404.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Редирект на HTTPS здесь не делаем: на reg.ru HTTPS снимает фронтовый nginx, и правило по %{HTTPS}
+  # может зациклиться. Включается в панели хостинга: «SSL-сертификат → Перенаправление на HTTPS».
+
+  # Старые адреса без завершающего слеша → страница трека
+  RewriteRule ^(s-nulya|profi|dlya-sebya|thank-you)$ /$1/ [R=301,L]
+
+  # Закрыть служебное: скрытые файлы (.git, .env, .htaccess …), исходники и бэкапы
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+  RewriteRule \.(map|md|log|sql|bak|zip|tar|gz|sh|env|ini|lock|json)$ - [F,L,NC]
+  RewriteRule ^(src|scripts|node_modules|backend|tgbot|audit|docs|brand)(/|$) - [F,L,NC]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "DENY"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' __INLINE_SCRIPT_HASHES__ https://mc.yandex.ru https://yastatic.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com; font-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru; frame-src https://mc.yandex.ru https://mc.yandex.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+  Header unset X-Powered-By
+
+  # Файлы с хешем в имени — навсегда; HTML — всегда свежий
+  <FilesMatch "\.(js|css|woff2?|webp|avif|png|jpg|svg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^(ym\.js|favicon\.svg|og\.jpg|apple-touch-icon\.png)$">
+    Header set Cache-Control "public, max-age=86400"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml application/xml text/plain
+</IfModule>
+
+<IfModule mod_mime.c>
+  AddType image/webp .webp
+  AddType font/woff2 .woff2
+</IfModule>
+

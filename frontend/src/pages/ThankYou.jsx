@@ -1,36 +1,23 @@
 import { Link } from 'react-router-dom'
 import Logo from '../components/Logo.jsx'
-import { SOCIALS } from '../config/socials.js'
+import CtaButton from '../components/CtaButton.jsx'
+import Icon from '../components/Icon.jsx'
+import { COPY, LINKS } from '../content/copy.js'
 
 export default function ThankYou() {
+  const t = COPY.thankYou
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-5 text-center gap-8">
+    <main className="mx-auto flex min-h-dvh max-w-2xl flex-col items-start justify-center gap-8 px-4 sm:px-8">
       <Logo />
-      <div className="max-w-md">
-        <div className="w-16 h-16 rounded-full bg-surface-2 border border-accent/40 flex items-center justify-center mx-auto mb-6 text-3xl text-accent-light">
-          &#10003;
-        </div>
-        <h1 className="text-3xl normal-case text-gradient-chrome mb-4">Спасибо за оплату!</h1>
-        <p className="normal-case text-text-muted font-sans leading-relaxed">
-          Вы будете добавлены в канал в течение 24 часов. Если у вас есть вопросы — напишите нам в Telegram.
-        </p>
+      <span className="grid h-14 w-14 place-items-center rounded-full border border-accent text-accent">
+        <Icon name="check" size={28} />
+      </span>
+      <h1 className="h-section">{t.title}</h1>
+      <p className="text-lg text-muted">{t.text}</p>
+      <div className="flex w-full flex-col gap-3 sm:flex-row">
+        <CtaButton href={LINKS.channel} goal="cta_thanks">{t.cta}</CtaButton>
+        <Link to="/" className="btn btn-ghost">{t.home}</Link>
       </div>
-      <div className="flex flex-col sm:flex-row gap-4">
-        <a
-          href={SOCIALS.channel}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-accent text-white font-display uppercase tracking-wide px-8 py-3 rounded-lg transition-all"
-        >
-          Написать в Telegram
-        </a>
-        <Link
-          to="/"
-          className="bg-surface-2 border border-border text-chrome font-display uppercase tracking-wide px-8 py-3 rounded-lg hover:border-accent/50 transition-colors"
-        >
-          На главную
-        </Link>
-      </div>
-    </div>
+    </main>
   )
 }

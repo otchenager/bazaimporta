@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-const PRODAMUS_TEST_MODE = String(process.env.PRODAMUS_TEST_MODE || 'true') === 'true'
+const isTestMode = (env) => String(env.PRODAMUS_TEST_MODE || 'true') === 'true'
 
 function sortRecursive(data) {
   if (Array.isArray(data)) {
@@ -56,10 +56,10 @@ function buildQueryString(params, prefix = '') {
   return parts.filter(Boolean).join('&')
 }
 
-export function buildPaymentUrl({ orderId, tariff, telegramUsername, email }) {
-  const shopId = process.env.PRODAMUS_SHOP_ID
-  const secretKey = process.env.PRODAMUS_SECRET_KEY
-  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+export function buildPaymentUrl({ orderId, tariff, telegramUsername, email }, env = process.env) {
+  const shopId = env.PRODAMUS_SHOP_ID
+  const secretKey = env.PRODAMUS_SECRET_KEY
+  const frontendUrl = env.FRONTEND_URL || 'http://localhost:5173'
 
   if (!shopId) {
     throw new Error('PRODAMUS_SHOP_ID is not configured')
@@ -72,14 +72,14 @@ export function buildPaymentUrl({ orderId, tariff, telegramUsername, email }) {
     customer_extra: `Telegram: @${telegramUsername}`,
     products: [
       {
-        name: `AJ import — доступ к каналу, ${tariff.title}`,
+        name: `BAZA Import — доступ к каналу, ${tariff.title}`,
         price: tariff.price,
         quantity: 1,
       },
     ],
     urlReturn: `${frontendUrl}/payment?tariff=${tariff.id}`,
     urlSuccess: `${frontendUrl}/thank-you`,
-    demo_mode: PRODAMUS_TEST_MODE ? 1 : 0,
+    demo_mode: isTestMode(env) ? 1 : 0,
   }
 
   if (secretKey) {
@@ -90,4 +90,3 @@ export function buildPaymentUrl({ orderId, tariff, telegramUsername, email }) {
   return `${baseUrl}?${buildQueryString(params)}`
 }
 
-export { PRODAMUS_TEST_MODE }

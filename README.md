@@ -1,43 +1,25 @@
-# AJ import — лендинг + приём оплат
+# BAZA Import — bazaimporta.ru
 
-Одностраничный сайт для продажи доступа к закрытому Telegram-каналу по
-импорту автомобилей из Кореи/Китая/Японии, с формой оплаты через Prodamus.
+Лендинг закрытого Telegram-клуба импортёров. Воронка: сайт → бесплатный канал [t.me/bazaimporta](https://t.me/bazaimporta)
+→ доступ в закрытый канал через бота [@bazaimporta_bot](https://t.me/bazaimporta_bot) (Robokassa, 4 990 ₽).
 
-## Структура репозитория
+## Структура
+- `frontend/` — сайт: React 19 + Vite + Tailwind 4, **пререндер в статику** (`/`, `/s-nulya/`, `/profi/`, `/dlya-sebya/`, 404).
+  Готовая сборка лежит в `frontend/dist` и выкладывается на reg.ru как есть (Apache, без Node).
+- `deploy/regru.sh` — выкладка: `check` / `deploy` / `rollback`. Инструкция — [`docs/deploy.md`](docs/deploy.md), откат — [`docs/rollback.md`](docs/rollback.md).
+- `backend/` — Express-сервис для оплаты через Prodamus. **Сейчас не используется** (оплата идёт через бота); код сохранён и защищён тестами.
+- `docs/` — план, тексты сайта (`copy.md`), список недостающего контента (`content-needed.md`).
+- `audit/` — скриншоты и Lighthouse до/после, конкуренты, оценка по рубрике.
+- `brand/` — варианты логотипа, лицензии ассетов.
 
-- `frontend/` — React + Vite + Tailwind CSS лендинг (деплой на Vercel)
-- `backend/` — Express-сервис: создание заказов Prodamus и приём вебхука об
-  оплате (деплой на Railway)
-
-Базы данных нет — сервис только формирует ссылку на оплату и транзитом
-обрабатывает вебхук от Prodamus, ничего не сохраняя.
-
-## Быстрый старт локально
-
+## Разработка
 ```bash
-# backend
-cd backend
-npm install
-cp .env.example .env   # заполните значения
-npm run dev            # http://localhost:4000
-
-# frontend (в отдельном терминале)
 cd frontend
-npm install
-cp .env.example .env   # VITE_API_URL=http://localhost:4000
-npm run dev            # http://localhost:5173
+npm ci
+npm run dev      # http://localhost:5173 (видны заглушки [НУЖЕН КОНТЕНТ])
+npm run lint     # oxlint + правила текста
+npm run build    # → dist/ (пререндер, .htaccess с CSP, sitemap, ym.js)
 ```
+Тексты — `frontend/src/content/copy.js` и `tracks.js` (зеркало — `docs/copy.md`).
 
-## Деплой
-
-1. **Backend → Railway**: Root Directory `backend`, Start Command `npm start`,
-   задайте переменные окружения из `backend/.env.example`. После деплоя
-   скопируйте публичный URL и укажите `{URL}/webhook/prodamus` в личном
-   кабинете Prodamus как адрес уведомлений.
-2. **Frontend → Vercel**: Root Directory `frontend`, Build Command
-   `npm run build`, Output Directory `dist`. Задайте `VITE_API_URL` равным
-   URL backend на Railway. `frontend/vercel.json` уже настроен на SPA-роутинг
-   для `/payment` и `/thank-you`.
-3. В настройках backend (`CORS_ORIGIN`) укажите домен фронтенда на Vercel.
-
-Подробности по каждой части — в `frontend/README.md` и `backend/README.md`.
+Backend: `cd backend && npm ci && npm test`.

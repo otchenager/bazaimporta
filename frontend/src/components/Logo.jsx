@@ -1,32 +1,26 @@
-export default function Logo({ className = '', showTagline = true }) {
+// Знак BAZA Import (вариант A из /brand): тёмный шильдик, буква B, оранжевая полоса-трасса.
+export function LogoMark({ size = 36, className = '' }) {
   return (
-    <div className={`flex items-center gap-3 select-none ${className}`}>
-      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
-        <defs>
-          <linearGradient id="chromeGrad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="35%" stopColor="#c9cdd3" />
-            <stop offset="65%" stopColor="#8a8e96" />
-            <stop offset="100%" stopColor="#e7e9ec" />
-          </linearGradient>
-          <linearGradient id="stripeGrad" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#ff8a3d" />
-            <stop offset="100%" stopColor="#a83d00" />
-          </linearGradient>
-          <clipPath id="badgeClip">
-            <rect x="1" y="1" width="42" height="42" rx="9" />
-          </clipPath>
-        </defs>
-        <rect x="1" y="1" width="42" height="42" rx="9" fill="#0a0a0a" stroke="url(#chromeGrad)" strokeWidth="1.5" />
-        <path d="M0 30 L30 0 L38 0 L8 44 L0 44 Z" fill="url(#stripeGrad)" clipPath="url(#badgeClip)" />
-        <text x="22" y="30" textAnchor="middle" fontFamily="Oswald, sans-serif" fontWeight="700" fontSize="20" fill="url(#chromeGrad)">BI</text>
-      </svg>
-      <div className="flex flex-col items-start leading-none">
-        <span className="font-display text-xl tracking-wide text-gradient-chrome font-semibold">BAZA Import</span>
-        {showTagline && (
-          <span className="text-[10px] tracking-[0.25em] text-text-muted uppercase font-sans mt-0.5">Korea · China · Japan</span>
-        )}
-      </div>
-    </div>
+    <svg width={size} height={size} viewBox="0 0 64 64" className={className} aria-hidden="true" focusable="false">
+      <rect width="64" height="64" rx="14" fill="#141416" />
+      <path d="M-4 58 50-4h14L10 62H-4z" fill="#ff6a00" />
+      <path
+        fillRule="evenodd"
+        fill="#ececef"
+        d="M18 13h20.5c7.4 0 11.5 3.6 11.5 9.3 0 3.6-1.9 6.2-5 7.4 4 1.1 6.6 4 6.6 8.4 0 6.4-4.6 10.9-12.8 10.9H18zm10 7.8v7.4h8.4c2.6 0 4-1.4 4-3.7s-1.4-3.7-4-3.7zm0 14.6v7.8h9.4c2.9 0 4.4-1.5 4.4-3.9s-1.5-3.9-4.4-3.9z"
+      />
+    </svg>
+  )
+}
+
+export default function Logo({ compact = false }) {
+  return (
+    <span className="flex items-center gap-2.5 select-none">
+      <LogoMark size={compact ? 32 : 36} />
+      <span className="font-display uppercase leading-none">
+        <span className="block text-[1.35rem] font-bold tracking-[0.02em]">BAZA</span>
+        <span className="mt-0.5 block text-[0.62rem] font-bold tracking-[0.42em] text-muted">Import</span>
+      </span>
+    </span>
   )
 }
