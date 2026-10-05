@@ -37,19 +37,20 @@ export default function Landing() {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink">
         К содержанию
       </a>
-      <Header activeSlug={track?.slug} />
+      <Header track={track} />
       <main id="main">
         <Hero track={track} />
-        <TrackPicker activeId={track?.id} />
+        {/* на странице трека сначала его содержание (H1 → лид → пункты), потом остальные треки */}
         {track && <TrackDetail key={track.id} track={track} />}
+        <TrackPicker activeId={track?.id} />
         <Trust />
         <HowItWorks />
-        <Pricing />
+        <Pricing track={track} />
         <FAQ />
-        <FinalCta />
+        <FinalCta track={track} />
       </main>
       <Footer />
-      <StickyCta />
+      <StickyCta key={track?.id ?? 'home'} track={track} />
     </>
   )
 }

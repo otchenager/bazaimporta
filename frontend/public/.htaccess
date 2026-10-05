@@ -13,7 +13,10 @@ ErrorDocument 403 /404.html
   # может зациклиться. Включается в панели хостинга: «SSL-сертификат → Перенаправление на HTTPS».
 
   # Старые адреса без завершающего слеша → страница трека
-  RewriteRule ^(s-nulya|profi|dlya-sebya|thank-you)$ /$1/ [R=301,L]
+  RewriteRule ^(s-nulya|est-opyt|dlya-sebya|thank-you)$ /$1/ [R=301,L]
+
+  # Трек «Профи» переименован в «Есть опыт»: старый адрес → новый
+  RewriteRule ^profi/?$ /est-opyt/ [R=301,L]
 
   # Закрыть служебное: скрытые файлы (.git, .env, .htaccess …), исходники и бэкапы
   RewriteRule (^|/)\.(?!well-known/) - [F,L]
@@ -24,18 +27,22 @@ ErrorDocument 403 /404.html
 <IfModule mod_headers.c>
   Header always set Strict-Transport-Security "max-age=31536000"
   Header always set X-Content-Type-Options "nosniff"
-  Header always set X-Frame-Options "DENY"
+  # Встраивание во фрейм запрещено всем, кроме самой Метрики (карта кликов и Вебвизор показывают сайт во фрейме).
+  # Поэтому вместо X-Frame-Options: DENY — frame-ancestors в CSP.
+  Header always unset X-Frame-Options
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
   Header always set Cross-Origin-Opener-Policy "same-origin"
-  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' __INLINE_SCRIPT_HASHES__ https://mc.yandex.ru https://yastatic.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com; font-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru; frame-src https://mc.yandex.ru https://mc.yandex.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
+  # Метрика и Вебвизор (yandex.ru/support/metrica/code/install-counter-csp): tag.js с mc.yandex.ru, сеть и пиксели —
+  # mc.yandex.ru/.com, Вебвизору нужны blob:-фреймы и воркеры.
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' __INLINE_SCRIPT_HASHES__ https://mc.yandex.ru https://mc.yandex.com https://yastatic.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://mc.yandex.ru https://mc.yandex.com; font-src 'self'; connect-src 'self' https://mc.yandex.ru https://mc.yandex.com wss://mc.yandex.ru wss://mc.yandex.com; frame-src blob: https://mc.yandex.ru https://mc.yandex.com; child-src blob: https://mc.yandex.ru https://mc.yandex.com; worker-src 'self' blob:; media-src 'self'; frame-ancestors 'self' https://metrika.yandex.ru https://metrika.yandex.by https://metrica.yandex.com https://metrica.yandex.com.tr https://webvisor.com https://*.webvisor.com; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests"
   Header unset X-Powered-By
 
   # Файлы с хешем в имени — навсегда; HTML — всегда свежий
   <FilesMatch "\.(js|css|woff2?|webp|avif|png|jpg|svg)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
-  <FilesMatch "^(ym\.js|favicon\.svg|og\.jpg|apple-touch-icon\.png)$">
+  <FilesMatch "^(metrika\.js|favicon\.svg|og\.jpg|apple-touch-icon\.png)$">
     Header set Cache-Control "public, max-age=86400"
   </FilesMatch>
   <FilesMatch "\.html$">

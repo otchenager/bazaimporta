@@ -4,8 +4,9 @@ import { useEffect, useRef } from 'react'
  * Появление при скролле. До загрузки JS и при reduced-motion всё видно сразу:
  * анимация включается классом .js, который App ставит после гидратации (см. index.css).
  * Элементы, уже видимые на экране в момент гидратации, помечаются сразу — без мигания.
+ * base — CSS-класс анимации: 'reveal' (блок целиком) или свой (например, 'gal' — карточки ленты по очереди).
  */
-export default function Reveal({ as: Tag = 'div', children, className = '', delay = 0, ...rest }) {
+export default function Reveal({ as: Tag = 'div', base = 'reveal', children, className = '', delay = 0, ...rest }) {
   const ref = useRef(null)
   useEffect(() => {
     const el = ref.current
@@ -27,7 +28,7 @@ export default function Reveal({ as: Tag = 'div', children, className = '', dela
     return () => io.disconnect()
   }, [])
   return (
-    <Tag ref={ref} className={`reveal ${className}`} style={delay ? { transitionDelay: `${delay}ms` } : undefined} {...rest}>
+    <Tag ref={ref} className={`${base} ${className}`} style={delay ? { transitionDelay: `${delay}ms` } : undefined} {...rest}>
       {children}
     </Tag>
   )

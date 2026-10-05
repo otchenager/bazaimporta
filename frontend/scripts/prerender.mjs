@@ -1,5 +1,5 @@
 // Пререндер: каждый маршрут → dist/<route>/index.html со своим <head>. Плюс 404.html, sitemap.xml,
-// .htaccess с CSP-хешем инлайн-скрипта и, если задан VITE_YM_ID, счётчик Метрики в /ym.js.
+// .htaccess с CSP-хешем инлайн-скрипта. Метрика — public/metrika.js (подключена в index.html).
 import fs from 'node:fs'
 import path from 'node:path'
 import crypto from 'node:crypto'
@@ -26,25 +26,7 @@ if (!entry) throw new Error('не найден <script type=module> в шабл�
 const loader = `<script>addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.type='module';s.src='${entry[1]}';document.head.appendChild(s)},1200)})</script>`
 const templateLowJs = template.replace(entry[0], loader)
 
-// Яндекс.Метрика — внешним файлом /ym.js (без инлайн-скриптов в CSP). Файл есть всегда:
-// при ID = 0 он ничего не делает. ID берётся из VITE_YM_ID при сборке или подставляется на сервере
-// при выкладке (см. docs/deploy.md: sed по строке «var ID = …;»).
-const ymId = /^\d+$/.test(process.env.VITE_YM_ID || '') ? process.env.VITE_YM_ID : '0'
-fs.writeFileSync(
-  path.join(dist, 'ym.js'),
-  `(function(){var ID = ${ymId};
-` +
-    `if(!ID)return;window.BAZA_YM_ID=ID;
-` +
-    `(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();` +
-    `for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r)return}` +
-    `k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})` +
-    `(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
-` +
-    `ym(ID,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});})();
-`,
-)
-const ymTags = '<script src="/ym.js" async></script>'
+// Яндекс Метрика: <script src="/metrika.js"> и <noscript> уже в index.html (public/metrika.js)
 
 // Предзагрузка шрифтов первого экрана: Oswald 700 (H1) и Manrope 400 (текст), кириллица
 const assetFiles = fs.readdirSync(path.join(dist, 'assets'))
@@ -57,7 +39,7 @@ const preload = ['oswald-cyrillic-700-normal', 'oswald-latin-700-normal', 'manro
 function page(url, outFile) {
   const { html, head } = render(url)
   const doc = templateLowJs
-    .replace('<!--app-head-->', preload + '\n    ' + head + (ymTags ? `\n    ${ymTags}` : ''))
+    .replace('<!--app-head-->', preload + '\n    ' + head)
     .replace('<!--app-html-->', html)
   fs.mkdirSync(path.dirname(outFile), { recursive: true })
   fs.writeFileSync(outFile, doc)

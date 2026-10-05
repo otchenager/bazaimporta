@@ -24,6 +24,8 @@ for (const w of [375, 768, 1440]) {
     window.scrollTo(0, 0); await new Promise((r) => setTimeout(r, 1300));
   });
   await page.screenshot({ path: path.join(outDir, `${w}-fold.png`) });
+  // content-visibility: auto не рисует секции вне экрана — для полного скриншота отключаем
+  await page.addStyleTag({ content: 'main > section { content-visibility: visible !important; }' });
   await page.screenshot({ path: path.join(outDir, `${w}-full.png`), fullPage: true });
   const hscroll = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   console.log(`${w}px: h-overflow=${hscroll}px errors=${errors.length}${errors.length ? ' ' + errors.slice(0, 3).join(' | ') : ''}`);

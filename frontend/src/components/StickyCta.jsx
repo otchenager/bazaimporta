@@ -6,7 +6,7 @@ import { COPY, LINKS } from '../content/copy.js'
  * Липкая кнопка на мобильных. Появляется, когда hero ушёл с экрана,
  * и прячется, пока виден финальный CTA (чтобы не было двух одинаковых кнопок).
  */
-export default function StickyCta() {
+export default function StickyCta({ track }) {
   const [hidden, setHidden] = useState(true)
 
   useEffect(() => {
@@ -34,9 +34,15 @@ export default function StickyCta() {
       data-hidden={hidden}
       aria-hidden={hidden}
     >
-      <CtaButton href={LINKS.channel} goal="cta_sticky" className="w-full" tabIndex={hidden ? -1 : 0}>
-        {COPY.sticky.cta}
-      </CtaButton>
+      {track ? (
+        <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="w-full" tabIndex={hidden ? -1 : 0}>
+          {COPY.exclusive.cta}
+        </CtaButton>
+      ) : (
+        <CtaButton href={LINKS.channel} goal="cta_sticky" className="w-full" tabIndex={hidden ? -1 : 0}>
+          {COPY.sticky.cta}
+        </CtaButton>
+      )}
     </div>
   )
 }

@@ -1,3 +1,4 @@
 {
+  "redirects": [{ "source": "/profi/?", "destination": "/est-opyt/", "permanent": true }],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

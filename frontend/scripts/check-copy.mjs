@@ -9,14 +9,15 @@ const head = (where, s) => words(s) > MAX_WORDS && problems.push(`${where}: за
 const para = (where, s) => s.length > MAX_CHARS && problems.push(`${where}: абзац ${s.length} знаков — «${s}»`)
 
 head('hero.title', COPY.hero.title.join(' '))
-para('hero.sub', COPY.hero.sub)
-for (const k of ['picker', 'trust', 'how', 'pricing', 'faq', 'final']) head(`${k}.title`, COPY[k].title)
+// hero.sub — текст владельца, дословно (116 знаков), лимит не применяем
+for (const k of ['picker', 'trust', 'how', 'faq', 'final']) head(`${k}.title`, COPY[k].title)
 para('trust.sub', COPY.trust.sub)
 para('final.sub', COPY.final.sub)
 COPY.faq.items.forEach((i, n) => para(`faq[${n}]`, i.a))
+// Тексты треков «С нуля» и «Есть опыт» (h1, sub, lead, points) — дословно от владельца, лимит длины к ним не применяем
 for (const t of TRACKS) {
-  head(`${t.id}.title`, t.title)
-  para(`${t.id}.promise`, t.promise)
+  if (t.title) head(`${t.id}.title`, t.title)
+  if (t.promise) para(`${t.id}.promise`, t.promise)
   para(`${t.id}.pain`, t.pain)
 }
 

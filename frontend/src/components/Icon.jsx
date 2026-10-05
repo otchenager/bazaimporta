@@ -42,15 +42,56 @@ const PATHS = {
     </>
   ),
   shield: <path d="M12 3 4.5 6v5.5c0 4.6 3.1 8.2 7.5 9.5 4.4-1.3 7.5-4.9 7.5-9.5V6zM8.5 12l2.5 2.5 4.5-5" />,
+  mentor: (
+    <>
+      <circle cx="12" cy="7.5" r="3.5" />
+      <path d="M5 20.5c.7-3.9 3.4-6 7-6s6.3 2.1 7 6M9.5 14.8 12 18l2.5-3.2" />
+    </>
+  ),
+  trophy: <path d="M7.5 4h9v4.5a4.5 4.5 0 0 1-9 0zM7.5 6H4.5c0 3 1.3 4.5 3.3 4.7M16.5 6h3c0 3-1.3 4.5-3.3 4.7M12 13v4M8.5 20.5h7M9.5 20.5l.5-3.5h4l.5 3.5" />,
+  truck: (
+    <>
+      <path d="M2.5 6.5h11v10h-11zM13.5 10h4l3 3.5v3h-7" />
+      <circle cx="6.5" cy="17.5" r="1.8" />
+      <circle cx="16.5" cy="17.5" r="1.8" />
+    </>
+  ),
+  handshake: <path d="M2.5 8.5 6 6.5l3.5 1 2.5-1.5 4 .5 5.5 2.5M2.5 8.5v6l2.5.5 5 4c.9.7 2 .5 2.5-.3M21.5 9v6.5l-2.5.5M9.5 7.5 7 11c-.5.9.4 1.9 1.4 1.5l3.1-1.5 6 5c.8.7.1 2-1 1.8M12.5 19.2c.8.5 1.9.2 2.3-.6M15 18.5c.8.4 1.8.1 2.1-.7" />,
+  monitor: (
+    <>
+      <rect x="3" y="4.5" width="18" height="12" rx="1.5" />
+      <path d="M8.5 20h7M12 16.5V20M6.5 8h5M6.5 11h8" />
+    </>
+  ),
+  gift: <path d="M4 10h16v10.5H4zM3 7h18v3H3zM12 7v13.5M12 7c-1.5-3.5-5.5-3.8-5.5-1.3C6.5 7 9 7 12 7zM12 7c1.5-3.5 5.5-3.8 5.5-1.3C17.5 7 15 7 12 7z" />,
+  coins: (
+    <>
+      <ellipse cx="9" cy="7" rx="5.5" ry="2.5" />
+      <path d="M3.5 7v4c0 1.4 2.5 2.5 5.5 2.5M3.5 11v4c0 1.4 2.5 2.5 5.5 2.5" />
+      <ellipse cx="15" cy="14" rx="5.5" ry="2.5" />
+      <path d="M9.5 14v3.5c0 1.4 2.5 2.5 5.5 2.5s5.5-1.1 5.5-2.5V14" />
+    </>
+  ),
+  briefcase: (
+    <>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M8.5 7V4.5h7V7M3 12.5h18M10.5 12.5v2h3v-2" />
+    </>
+  ),
+  play: <path d="M8 5.5v13l10.5-6.5z" />,
+  'chevron-left': <path d="m14.5 5.5-6.5 6.5 6.5 6.5" />,
+  'chevron-right': <path d="m9.5 5.5 6.5 6.5-6.5 6.5" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   down: <path d="M12 5v14M6 13l6 6 6-6" />,
   plus: <path d="M12 5v14M5 12h14" />,
+  close: <path d="M6 6l12 12M18 6 6 18" />,
+  zoom: <path d="M10.5 4.5a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM15 15l4.5 4.5M10.5 8v5M8 10.5h5" />,
   check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
   telegram: <path d="m21 4.5-3 15.2c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.1c-.3.3-.5.5-1 .5l.3-4.7 8.6-7.8c.4-.3-.1-.5-.6-.2L6.2 13.7l-4.6-1.4c-1-.3-1-1 .2-1.5l17.9-6.9c.8-.3 1.6.2 1.3 1.6z" />,
 }
 
 export default function Icon({ name, size = 24, className = '', strokeWidth = 1.6 }) {
-  const filled = name === 'telegram'
+  const filled = name === 'telegram' || name === 'play'
   return (
     <svg
       width={size}

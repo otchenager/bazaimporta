@@ -58,7 +58,12 @@ export function headHtml(pathname) {
       jsonLd({
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
-        mainEntity: COPY.faq.items.map((i) => ({ '@type': 'Question', name: i.q, acceptedAnswer: { '@type': 'Answer', text: i.a } })),
+        // ссылки в ответе — тегом <a> (schema.org Answer.text допускает его)
+        mainEntity: COPY.faq.items.map((i) => ({
+          '@type': 'Question',
+          name: i.q,
+          acceptedAnswer: { '@type': 'Answer', text: i.link ? i.a.replace(i.link.text, `<a href="${i.link.href}">${i.link.text}</a>`) : i.a },
+        })),
       }),
     )
   }

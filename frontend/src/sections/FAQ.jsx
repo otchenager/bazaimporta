@@ -1,6 +1,22 @@
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { COPY } from '../content/copy.js'
+import { track } from '../lib/analytics.js'
+
+/** Ответ; если у вопроса есть link — эта часть текста становится ссылкой (с целью Метрики). */
+function Answer({ it }) {
+  if (!it.link) return it.a
+  const [before, after] = it.a.split(it.link.text)
+  return (
+    <>
+      {before}
+      <a href={it.link.href} target="_blank" rel="noopener" className="link" data-goal={it.link.goal} onClick={() => track(it.link.goal)}>
+        {it.link.text}
+      </a>
+      {after}
+    </>
+  )
+}
 
 export default function FAQ() {
   const f = COPY.faq
@@ -18,7 +34,9 @@ export default function FAQ() {
                 {it.q}
                 <Icon name="plus" size={22} className="plus shrink-0 text-accent" />
               </summary>
-              <p className="-mt-1 max-w-[60ch] pb-5 text-muted">{it.a}</p>
+              <p className="-mt-1 max-w-[60ch] pb-5 text-muted">
+                <Answer it={it} />
+              </p>
             </details>
           ))}
         </div>

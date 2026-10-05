@@ -16,6 +16,12 @@ const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '
 http.createServer((req, res) => {
   const headers = readHeaders();
   let p = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+  // 301 из .htaccess (RewriteRule … [R=301,…])
+  const ht = fs.existsSync(path.join(root, '.htaccess')) ? fs.readFileSync(path.join(root, '.htaccess'), 'utf8') : '';
+  for (const m of ht.matchAll(/^\s*RewriteRule\s+(\S+)\s+(\S+)\s+\[R=301[^\]]*\]/gm)) {
+    const re = new RegExp(m[1]), hit = p.slice(1).match(re);
+    if (hit) { res.writeHead(301, { Location: m[2].replace(/\$(\d)/g, (_, n) => hit[n]) }); return res.end(); }
+  }
   if (/(^|\/)\./.test(p)) { res.writeHead(403); return res.end(); }
   let f = path.join(root, p);
   if (fs.existsSync(f) && fs.statSync(f).isDirectory()) {

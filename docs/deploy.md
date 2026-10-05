@@ -23,7 +23,7 @@ bash ~/regru.sh deploy
 
 ## Что делает `deploy`
 1. Ищет счётчики на текущей главной.
-   - Яндекс.Метрику переносит сам: номер счётчика подставляется в `/ym.js`.
+   - Метрика: счётчик 113396195 уже в `/metrika.js`; если на старом сайте был другой номер — скрипт предупредит.
    - Если находит **другие** пиксели (VK, myTarget, Facebook, Google), **останавливается** и просит прислать вывод — чтобы ничего не потерять.
 2. Бэкап всей папки сайта (с `.htaccess` и `.git`) → `~/backups/bazaimporta-ГГГГММДД-ЧЧММСС.tar.gz`.
 3. Незакоммиченные правки на проде коммитит в локальную ветку `prod-snapshot-…`. Плюс они лежат в архиве.
@@ -31,7 +31,7 @@ bash ~/regru.sh deploy
    - если сайт отдаётся из `frontend/dist` git-репозитория — переключает репозиторий на `redesign`;
    - иначе копирует `frontend/dist` из `~/bazaimporta-src` в папку сайта. Старые файлы не удаляются.
 5. Проверяет на живом сайте:
-   - все 4 страницы, OG-картинку, `ym.js`, sitemap и оферту;
+   - все 4 страницы, OG-картинку, `metrika.js`, sitemap и оферту;
    - что 404 работает и что `/.git` и `/.env` закрыты;
    - что ссылки на канал и бота на месте и что отдаётся CSP.
 
@@ -40,19 +40,24 @@ bash ~/regru.sh deploy
 - Если `verify` пишет «нет CSP» — включить модуль `mod_headers` (обычно включён).
 
 ## После выкладки — руками (3 минуты)
-- Открыть сайт с телефона из Telegram: главная → «Кто ты?» → трек → «Вступить бесплатно» ведёт в канал.
-- В трековом блоке «Профи» кнопка «Закрытый канал — 4 990 ₽» ведёт в @bazaimporta_bot, оплата открывается.
+- Открыть сайт с телефона из Telegram: главная → «Вступить бесплатно» ведёт в канал; «Кто ты?» → трек.
+- На страницах треков кнопки «Вступить в базу» ведут к боту Бориса (ссылка — `BORIS_BOT_URL` в `frontend/src/content/copy.js`).
+- В треке «Есть опыт» кнопка «Закрытый канал — 4 990 ₽» ведёт в @bazaimporta_bot, оплата открывается.
+- Старый адрес `/profi/` отдаёт 301 на `/est-opyt/`.
 - Отправить ссылку на сайт в Telegram — превью с картинкой (`/og.jpg`). Если превью старое — @WebpageBot → «обновить».
-- Метрика → Цели: создать JavaScript-события `cta_hero`, `cta_track_newbie`, `cta_track_pro`, `cta_track_personal`,
-  `cta_paid`, `cta_header`, `cta_sticky`, `cta_final`, `cta_pricing_free`.
+- Метрика → Цели: создать JavaScript-события `cta_hero`, `cta_header`, `cta_sticky`, `cta_final`, `cta_pricing_free`, `cta_paid`,
+  `cta_track_newbie`, `cta_track_experienced`, `cta_track_personal`, `cta_exclusive_newbie`, `cta_exclusive_experienced`,
+  `cta_exclusive_personal`. Цель `cta_track_pro` больше не отправляется.
 
 ## Пересборка (если правили тексты)
 ```bash
 cd frontend
 npm ci
 npm run lint     # oxlint + правила текста (заголовок ≤ 8 слов, абзац ≤ 110 знаков)
-npm run build    # vite → пререндер 4 страниц + 404 → dist/ (с .htaccess, sitemap, ym.js)
+npm run build    # vite → пререндер 4 страниц + 404 → dist/ (с .htaccess, sitemap; Метрика — public/metrika.js)
 git add -A && git commit -m "…" && git push
 # на сервере: bash ~/regru.sh deploy
 ```
 Новые фото: положить в `frontend/src/assets/media`, затем `npm run media`.
+Кейс Lamborghini и превью блока 444: `python scripts/prepare-case-media.py`; рисунок в hero: `python scripts/handshake-lineart.py`
+(нужны `pip install opencv-python-headless pillow imageio-ffmpeg`).

@@ -97,7 +97,7 @@ cmd_deploy() {
   other="$(echo "$found" | grep -vE '^(mc\.yandex|yandex\.ru/metrika|ym\()' | grep -v '^$' || true)"
   echo "${found:-не найдено}"
   [ -z "$other" ] || die "на сайте есть другие пиксели — пришлите этот вывод, перенесу их в новую версию:\n$other"
-  [ -n "$ym" ] && ok "Яндекс.Метрика: счётчик $ym — будет перенесён" || echo "Метрика на текущем сайте не найдена"
+  [ -n "$ym" ] && ok "Яндекс.Метрика на текущем сайте: счётчик $ym" || echo "Метрика на текущем сайте не найдена"
 
   say "2/6 Бэкап";                 backup
   if [ -f "$DOCROOT/.htaccess" ]; then
@@ -127,8 +127,10 @@ cmd_deploy() {
   fi
 
   say "5/6 Метрика"
-  if [ -n "$ym" ]; then sed -i "s/var ID = 0;/var ID = $ym;/" "$dist/ym.js" && ok "ym.js: счётчик $ym"
-  else echo "ym.js без счётчика (ID = 0). Пришлите номер счётчика — подключу."; fi
+  # Счётчик 113396195 зашит в frontend/public/metrika.js. Второй счётчик на сайте не нужен.
+  if [ -n "$ym" ] && [ "$ym" != 113396195 ]; then
+    bad "на старом сайте был другой счётчик ($ym). Новый сайт шлёт данные только в 113396195 — проверьте, что так и задумано"
+  else ok "metrika.js: счётчик 113396195"; fi
 
   say "6/6 Проверка живого сайта"
   verify
@@ -137,10 +139,12 @@ cmd_deploy() {
 
 verify() {
   local fail=0 code
-  for p in / /s-nulya/ /profi/ /dlya-sebya/ /og.jpg /favicon.svg /ym.js /sitemap.xml /robots.txt /oferta.docx; do
+  for p in / /s-nulya/ /est-opyt/ /dlya-sebya/ /og.jpg /favicon.svg /metrika.js /sitemap.xml /robots.txt /oferta.docx; do
     code="$(curl -s -m 20 -o /dev/null -w '%{http_code}' "$SITE$p")"
     [ "$code" = 200 ] && ok "$p → 200" || { bad "$p → $code"; fail=1; }
   done
+  code="$(curl -s -m 20 -o /dev/null -w '%{http_code} %{redirect_url}' "$SITE/profi/")"
+  case "$code" in "301 "*/est-opyt/) ok "/profi/ → 301 → /est-opyt/";; *) bad "/profi/ → $code (нужен 301 на /est-opyt/)"; fail=1;; esac
   code="$(curl -s -m 20 -o /dev/null -w '%{http_code}' "$SITE/net-takoi-stranicy")"; [ "$code" = 404 ] && ok "404 работает" || { bad "404 → $code"; fail=1; }
   for p in /.git/config /.htaccess /.env; do
     code="$(curl -s -m 20 -o /dev/null -w '%{http_code}' "$SITE$p")"

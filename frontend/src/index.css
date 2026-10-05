@@ -40,8 +40,9 @@
     font-family: var(--font-display);
     text-transform: uppercase;
     font-weight: 700;
-    letter-spacing: -0.005em;
-    line-height: 0.95;
+    letter-spacing: 0;
+    /* Oswald в капсе: кратка Й и точки Ё выходят над прописными на ~0.17em — интервал с запасом, чтобы не касались строки выше */
+    line-height: 1.12;
     text-wrap: balance;
   }
   p { text-wrap: pretty; }
@@ -63,8 +64,8 @@
   gap: 0.6rem;
 }
 .kicker::before { content: ''; width: 1.5rem; height: 1px; background: currentColor; }
-.h-display { font-size: clamp(2.9rem, 11vw, 5.4rem); }
-.h-section { font-size: clamp(2.25rem, 7.5vw, 4.25rem); }
+.h-display { font-size: clamp(2.6rem, 10.5vw, 5rem); line-height: 1.24; }
+.h-section { font-size: clamp(2.1rem, 7vw, 4.25rem); line-height: 1.18; }
 .num { font-family: var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 
 /* ——— Кнопки ——— */
@@ -96,15 +97,90 @@
 .reveal { transition: opacity .9s var(--ease-out-expo), transform .9s var(--ease-out-expo); }
 .js .reveal:not(.is-visible) { opacity: 0; transform: translateY(24px); }
 
-/* ——— Карточки треков: наклон и блик за курсором ——— */
-.tilt { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--ease-out-expo), border-color .3s; will-change: transform; }
-.tilt .glare {
-  position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
-  background: radial-gradient(400px circle at var(--gx, 50%) var(--gy, 50%), rgba(255,255,255,.12), transparent 45%);
+/* ——— Hero: линейный рисунок ———
+   Маска раскрывает его сверху вниз (контуры чуть раньше деталей), по кромке — оранжевый «сканер» с мягким свечением.
+   Только clip-path, transform и opacity. Ховер — едва заметный наклон и подсветка линий под курсором (JS ставит --mx/--my/--rx…). */
+.art { --reveal: 1.9s; --reveal-ease: cubic-bezier(0.33, 0, 0.2, 1); }
+.art-tilt {
+  position: absolute; inset: 0; overflow: hidden;
+  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(var(--tx, 0px), var(--ty, 0px), 0);
+  transition: transform .7s var(--ease-out-expo);
 }
-.tilt:hover .glare { opacity: 1; }
-.tilt img { transition: transform .8s var(--ease-out-expo); }
-.tilt:hover img { transform: scale(1.05); }
+.art-l { position: absolute; inset: 0; width: 100%; height: 100%; }
+.art-lo { animation: art-reveal var(--reveal) var(--reveal-ease) .1s both; }
+.art-ld { animation: art-reveal var(--reveal) var(--reveal-ease) .4s both; }
+/* цветная заливка: приходит после загрузки, проявляется мягко; детали людей поверх цвета — тёмной тушью */
+.art-lf { opacity: 0; transition: opacity 1.4s ease-out; animation: art-reveal var(--reveal) var(--reveal-ease) .4s both; }
+.art.is-filled .art-lf { opacity: 1; }
+.art.is-filled .ink { stroke: #24180f; stroke-opacity: .78; transition: stroke .8s; }
+/* лица в заливке нарисованы подробнее (scripts/handshake_faces.py) — упрощённые линии лиц уходят вместе с её появлением */
+.art .lface { transition: opacity 1.4s ease-out; }
+.art.is-filled .lface { opacity: 0; }
+@keyframes art-reveal {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+.art-scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 100%; pointer-events: none;
+  background:
+    linear-gradient(to bottom, transparent calc(100% - 3px), #ff8a3d calc(100% - 1.5px), transparent 100%),
+    linear-gradient(to bottom, transparent calc(100% - 46px), rgb(255 106 0 / .16) calc(100% - 2px), transparent 100%);
+  filter: drop-shadow(0 0 6px rgb(255 106 0 / .7));
+  transform: translateY(-100%); opacity: 0;
+  animation: art-scan var(--reveal) var(--reveal-ease) .1s both;
+}
+@keyframes art-scan {
+  0% { transform: translateY(-100%); opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+/* редкий блик по линиям машины: узкая полоса маски проходит слева направо раз в ~10 с */
+.art-glint {
+  opacity: .85;
+  -webkit-mask-image: linear-gradient(100deg, transparent 44%, #000 50%, transparent 56%);
+  mask-image: linear-gradient(100deg, transparent 44%, #000 50%, transparent 56%);
+  -webkit-mask-size: 300% 100%; mask-size: 300% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+  -webkit-mask-position: 100% 0; mask-position: 100% 0;
+  animation: art-glint 10s ease-in-out 3.2s infinite;
+}
+@keyframes art-glint {
+  0% { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
+  16%, 100% { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
+}
+.art-hl {
+  opacity: 0; transition: opacity .4s;
+  -webkit-mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), #000 0, transparent 22%);
+  mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), #000 0, transparent 22%);
+}
+.art[data-hover] .art-hl { opacity: .5; }
+/* рисунок ниже первого экрана ждёт появления (ставит HandshakeArt) */
+.art-wait .art-lo, .art-wait .art-ld, .art-wait .art-lf { animation: none; clip-path: inset(0 0 100% 0); }
+.art-wait .art-scan, .art-wait .art-glint { animation: none; opacity: 0; }
+
+/* ——— Карточки треков: в покое фото + название; ховер — фото тускнеет, проявляется подзаголовок ——— */
+.track-photo { transition: transform .28s ease-out, filter .28s ease-out; }
+.track-shade { background: linear-gradient(to top, rgb(10 10 10 / .92) 0%, rgb(10 10 10 / .6) 50%, rgb(10 10 10 / .15) 100%); }
+.track-more { transition: max-height .28s ease-out, opacity .28s ease-out; }
+/* Ховер есть только у мыши: на тач-экранах (и на узких, где карточки в одну колонку) подзаголовок виден всегда поверх затемнения */
+@media (hover: hover) and (pointer: fine) and (min-width: 640px) {
+  .track-shade { background: linear-gradient(to top, rgb(10 10 10 / .85) 0%, rgb(10 10 10 / .25) 38%, transparent 60%); }
+  .track-more { max-height: 0; opacity: 0; overflow: hidden; }
+  .track-card:hover .track-photo, .track-card:focus-visible .track-photo { filter: brightness(.38); transform: scale(1.05); }
+  .track-card:hover .track-more, .track-card:focus-visible .track-more { max-height: 9rem; opacity: 1; }
+}
+
+/* ——— Карусели: стрелки ← → ——— */
+.carousel-arrow {
+  display: grid; place-items: center; flex-shrink: 0; width: 2.75rem; height: 2.75rem; border-radius: 9999px;
+  border: 1px solid var(--color-line-strong); background: var(--color-surface); color: var(--color-text);
+  transition: border-color .2s, color .2s, opacity .2s; touch-action: manipulation; cursor: pointer;
+}
+.carousel-arrow:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent); }
+.carousel-arrow:disabled { opacity: .35; cursor: default; }
+
+/* ——— Кейс: фото по высоте равно карточке справа (и не ниже 4:3) ——— */
+.deal-main { container-type: inline-size; }
+.deal-frame { min-height: 75cqw; height: 100%; touch-action: pan-y; }
 
 /* ——— Дорожная карта: бегущая точка ——— */
 .rail { position: relative; }
@@ -122,6 +198,63 @@
 .strip::-webkit-scrollbar { display: none; }
 .strip > * { scroll-snap-align: start; }
 
+/* ——— Лента выдач: телефон — 1 карточка + край, планшет — 2 + край, десктоп — 3 + край 4-й ———
+   Появление: карточки по очереди, fade + 10 px вверх (запас снизу — чтобы сдвиг не обрезался лентой). */
+.gallery { overflow-y: hidden; padding-bottom: 12px; margin-bottom: -12px; }
+.gallery > li { flex: 0 0 calc((100% - 16px) / 1.18); }
+@media (min-width: 640px) { .gallery > li { flex-basis: calc((100% - 2 * 16px) / 2.25); } }
+@media (min-width: 1024px) { .gallery > li { flex-basis: calc((100% - 3 * 16px) / 3.25); } }
+.gal-card {
+  display: block; width: 100%; aspect-ratio: 4 / 5; overflow: hidden; cursor: zoom-in;
+  border-radius: 0.75rem; border: 1px solid var(--color-line); background: var(--color-surface); transition: border-color .3s;
+}
+.gal-card:focus-visible { outline-offset: -3px; }
+.gal-card img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s var(--ease-out-expo), filter .5s var(--ease-out-expo); }
+@media (hover: hover) and (pointer: fine) {
+  .gal-card:hover { border-color: var(--color-line-strong); }
+  .gal-card:hover img { transform: scale(1.03); filter: brightness(1.07); }
+}
+.gal-item { transition: opacity .7s var(--ease-out-expo), transform .7s var(--ease-out-expo); transition-delay: calc(var(--i, 0) * 80ms); }
+.js .gal:not(.is-visible) .gal-item { opacity: 0; transform: translateY(10px); }
+
+/* ——— Лайтбокс ——— */
+.lightbox {
+  position: fixed; inset: 0; width: 100%; height: 100%; max-width: none; max-height: none; margin: 0; padding: 1rem;
+  border: 0; background: rgb(6 6 7 / .94); color: var(--color-text); overscroll-behavior: contain;
+}
+.lightbox[open] { display: grid; place-items: center; animation: lb-in .25s ease-out; }
+.lightbox::backdrop { background: transparent; }
+.lightbox-fig { margin: 0; max-width: min(100%, 1100px); touch-action: none; }
+.lightbox-fig img { display: block; max-width: 100%; max-height: calc(100dvh - 9rem); width: auto; height: auto; border-radius: 0.75rem; user-select: none; -webkit-user-drag: none; }
+.lightbox-close { position: absolute; top: max(1rem, env(safe-area-inset-top)); right: 1rem; }
+.lightbox-prev, .lightbox-next { position: absolute; top: 50%; translate: 0 -50%; }
+.lightbox-prev { left: 1rem; }
+.lightbox-next { right: 1rem; }
+@media (max-width: 639px) {
+  .lightbox-prev, .lightbox-next { top: auto; bottom: max(1.25rem, env(safe-area-inset-bottom)); translate: none; }
+  .lightbox-prev { left: calc(50% - 3.25rem); }
+  .lightbox-next { right: calc(50% - 3.25rem); left: auto; }
+}
+@keyframes lb-in { from { opacity: 0; } }
+
+/* ——— Скриншот переписки («Есть опыт»): карточка-«телефон», чуть наклонена ——— */
+.chat-phone {
+  display: block; width: 100%; cursor: zoom-in; padding: 0.5rem; border-radius: 1.75rem;
+  border: 1px solid var(--color-line-strong); background: var(--color-surface-2);
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / .8), 0 2px 8px rgb(0 0 0 / .35);
+  transition: transform .4s var(--ease-out-expo), border-color .3s;
+}
+.chat-phone::before { content: ''; display: block; width: 3.5rem; height: 0.3rem; margin: 0.15rem auto 0.5rem; border-radius: 9999px; background: var(--color-line-strong); }
+.chat-phone img { display: block; width: 100%; height: auto; border-radius: 1.25rem; }
+@media (min-width: 1024px) { .chat-phone { transform: rotate(-1.5deg); } }
+@media (hover: hover) and (pointer: fine) {
+  .chat-phone:hover { transform: rotate(0deg) translateY(-2px); border-color: var(--color-accent); }
+}
+
+/* ——— Ссылка в тексте ——— */
+.link { color: var(--color-accent); text-underline-offset: 3px; }
+.link:hover { text-decoration: underline; }
+
 /* ——— FAQ ——— */
 details > summary { list-style: none; cursor: pointer; }
 details > summary::-webkit-details-marker { display: none; }
@@ -137,8 +270,10 @@ details[open] .plus { transform: rotate(45deg); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .js .reveal:not(.is-visible) { opacity: 1; transform: none; }
-  .tilt { transform: none !important; }
+  .js .reveal:not(.is-visible), .js .gal:not(.is-visible) .gal-item { opacity: 1; transform: none; }
+  .art-lo, .art-ld, .art-lf { animation: none; clip-path: none; }
+  .art-scan, .art-glint, .art-hl { display: none; }
+  .art-tilt { transform: none; }
   .rail-dot { display: none; }
 }
 
