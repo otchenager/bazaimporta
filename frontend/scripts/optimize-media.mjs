@@ -15,14 +15,21 @@ const slug = (f) =>
 
 // блоки*.jpg — скриншоты закрытого канала, их режет scripts/prepare-case-media.py
 const files = fs.readdirSync(src).filter((f) => /\.(jpe?g|png)$/i.test(f) && !f.startsWith('блоки'))
+const sizes = {}
 for (const f of files) {
   const name = slug(f)
+  // целиком, без кадрирования — для лайтбокса (карточки 4:5 обрезают края, а исходники часто квадратные)
+  const full = await sharp(path.join(src, f)).rotate().resize({ width: 1280, height: 1280, fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 76, effort: 6 }).toFile(path.join(out, `${name}-full.webp`))
+  sizes[name] = [full.width, full.height]
   for (const w of [480, 960]) {
     const img = sharp(path.join(src, f)).rotate().resize({ width: w, height: Math.round(w * 1.25), fit: 'cover', position: 'attention' })
     await img.clone().webp({ quality: 72, effort: 6 }).toFile(path.join(out, `${name}-${w}.webp`))
     await img.clone().avif({ quality: 50, effort: 6 }).toFile(path.join(out, `${name}-${w}.avif`))
   }
 }
+
+fs.writeFileSync(path.join(out, 'sizes.json'), JSON.stringify(sizes, null, 1) + '\n')
 
 // Open Graph image source: wide crop of the Huracán handover photo
 await sharp(path.join(src, 'lamb.jpg'))

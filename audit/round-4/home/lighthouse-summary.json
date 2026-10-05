@@ -7,7 +7,7 @@
     "LCP": "1.5 s",
     "CLS": "0.012",
     "TBT": "50 ms",
-    "weight": "Total size was 819 KiB"
+    "weight": "Total size was 646 KiB"
   },
   "desktop": {
     "performance": 100,
@@ -17,6 +17,6 @@
     "LCP": "0.4 s",
     "CLS": "0.009",
     "TBT": "0 ms",
-    "weight": "Total size was 653 KiB"
+    "weight": "Total size was 651 KiB"
   }
 }

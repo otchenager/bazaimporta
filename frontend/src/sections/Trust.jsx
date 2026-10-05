@@ -4,7 +4,7 @@ import Lightbox from '../components/Lightbox.jsx'
 import Reveal from '../components/Reveal.jsx'
 import DealCase from './DealCase.jsx'
 import { COPY, LEGAL, LINKS } from '../content/copy.js'
-import { ALL_PHOTOS, photoAvif, photoLarge, photoProps } from '../lib/images.js'
+import { ALL_PHOTOS, photoAvif, photoFull, photoProps } from '../lib/images.js'
 import useCarousel from '../lib/useCarousel.js'
 
 // Выдачи клиентам: сначала BMW и Audi (раньше были в галерее кейса), дальше остальные фото. Huracán — в кейсе.
@@ -17,7 +17,7 @@ const PHOTOS = [...FIRST, ...ALL_PHOTOS.filter((k) => k !== 'lamb' && !FIRST.inc
   key,
   alt: ALT[key] ?? 'Передача машины клиенту',
 }))
-const LARGE = PHOTOS.map((p) => ({ src: photoLarge(p.key), alt: p.alt, width: 960, height: 1200 }))
+const LARGE = PHOTOS.map((p) => ({ ...photoFull(p.key), alt: p.alt })) // в лайтбоксе — кадр целиком
 const GAP = 16
 
 /** Лента выдач: десктоп — 3 карточки + край 4-й, планшет — 2 + край, телефон — 1 + край. По клику — лайтбокс. */

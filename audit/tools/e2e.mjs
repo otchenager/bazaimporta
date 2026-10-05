@@ -393,6 +393,19 @@ let BORIS = '';
   }
   await ctx.close();
 }
+// Мобильный (80% трафика): рисунок hero в первом экране, карточки треков — текст под фото, лица не обрезаны
+{
+  for (const [w, h] of [[390, 844], [430, 932]]) {
+    const ctx = await b.newContext({ viewport: { width: w, height: h }, isMobile: true, hasTouch: true });
+    const p = await ctx.newPage();
+    await p.goto(base + '/', { waitUntil: 'load' });
+    const art = await p.$eval('#hero .art', (e) => { const r = e.getBoundingClientRect(); return [Math.round(r.top), Math.round(r.bottom)]; });
+    check(`${w}×${h}: рисунок hero целиком в первом экране`, art[1] <= h, JSON.stringify(art));
+    const cards = await p.$$eval('#tracks .track-card', (cs) => cs.map((c) => { const i = c.querySelector('img').getBoundingClientRect(), t = c.querySelector('h3').getBoundingClientRect(); return t.top >= i.bottom - 1; }));
+    check(`${w}: карточки «Кто ты?» — текст под фото, не поверх людей`, cards.length === 3 && cards.every(Boolean), JSON.stringify(cards));
+    await ctx.close();
+  }
+}
 // 8. 360 px: нет горизонтального скролла; карусели на всех треках; лента галереи с «подсказкой»
 {
   const ctx = await b.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true });

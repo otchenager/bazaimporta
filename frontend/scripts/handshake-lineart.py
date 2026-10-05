@@ -220,7 +220,7 @@ def group(gid, paths, **attrs):
 def on_face(a):
     """Линия лица/головы (в координатах рисунка): в цветном режиме её заменяет подробное лицо из заливки."""
     cx, cy = np.asarray(a, float).mean(axis=0) + (X0, Y0)
-    return any(cv2.pointPolygonTest(np.array(h['poly'], np.float32), (float(cx), float(cy)), False) >= 0 for h in HEADS)
+    return any(cv2.pointPolygonTest(np.array(h['poly'], np.float32), (float(cx), float(cy)), False) >= 0 for h in HEADS if h['detail'] and not h.get('lines'))
 
 
 def split_face(paths):

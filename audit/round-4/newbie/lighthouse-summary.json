@@ -1,0 +1,22 @@
+{
+  "mobile": {
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "LCP": "1.7 s",
+    "CLS": "0",
+    "TBT": "120 ms",
+    "weight": "Total size was 318 KiB"
+  },
+  "desktop": {
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "LCP": "0.4 s",
+    "CLS": "0.011",
+    "TBT": "0 ms",
+    "weight": "Total size was 423 KiB"
+  }
+}
