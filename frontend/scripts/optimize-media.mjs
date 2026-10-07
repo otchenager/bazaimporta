@@ -14,7 +14,8 @@ const slug = (f) =>
   path.parse(f).name.replace(/^photo_2026-08-30_/, 'p').replace(/[^a-z0-9]+/gi, '-').replace(/-+$/, '').toLowerCase()
 
 // блоки*.jpg — скриншоты закрытого канала, их режет scripts/prepare-case-media.py
-const files = fs.readdirSync(src).filter((f) => /\.(jpe?g|png)$/i.test(f) && !f.startsWith('блоки'))
+// newlamb*.png — референсы машины hero, в галерею не идут
+const files = fs.readdirSync(src).filter((f) => /\.(jpe?g|png)$/i.test(f) && !f.startsWith('блоки') && !/^newlamb/i.test(f))
 const sizes = {}
 for (const f of files) {
   const name = slug(f)
@@ -31,6 +32,6 @@ for (const f of files) {
 
 fs.writeFileSync(path.join(out, 'sizes.json'), JSON.stringify(sizes, null, 1) + '\n')
 
-// OG-картинка — из рисунка hero (scripts/og.html → scripts/render-og.mjs), фото для неё не нужно
+// OG-картинка — из кадра 3D-модели hero (scripts/og.html → scripts/render-og.mjs), фото для неё не нужно
 
 console.log(`optimized ${files.length} photos → ${path.relative(root, out)}`)

@@ -9,9 +9,8 @@
   @font-face { font-family: Manrope; font-weight: 600; src: url(../node_modules/@fontsource/manrope/files/manrope-cyrillic-600-normal.woff2) format('woff2'); }
   @font-face { font-family: Manrope; font-weight: 600; src: url(../node_modules/@fontsource/manrope/files/manrope-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+20BD; }
   html, body { margin: 0; width: 1200px; height: 630px; background: #0a0a0a; overflow: hidden; }
-  /* рисунок hero (src/visual/car-*.svg): заливка, контуры и детали — слоями, как на сайте */
-  .car { position: absolute; right: -70px; bottom: 96px; width: 590px; aspect-ratio: 618 / 294; }
-  .car img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  /* кадр 3D-модели hero (src/visual/car-still.webp, scripts/car-still.mjs) */
+  .car { position: absolute; right: -60px; bottom: 90px; width: 620px; }
   .text { position: absolute; left: 64px; top: 64px; bottom: 64px; width: 640px; display: flex; flex-direction: column; justify-content: space-between; }
   .mark { display: flex; align-items: center; gap: 14px; font: 700 34px Oswald; color: #ececef; letter-spacing: .02em; }
   .mark img { width: 56px; height: 56px; }
@@ -22,11 +21,7 @@
 </style>
 </head>
 <body>
-  <div class="car">
-    <img src="../src/visual/car-fill.svg" alt="">
-    <img src="../src/visual/car-o.svg" alt="">
-    <img src="../src/visual/car-d.svg" alt="">
-  </div>
+  <img class="car" src="../src/visual/car-still.webp" alt="">
   <div class="text">
     <div class="mark"><img src="../public/favicon.svg" alt="">BAZA IMPORT</div>
     <h1>Привози авто из-за границы <em>без переплат</em></h1>

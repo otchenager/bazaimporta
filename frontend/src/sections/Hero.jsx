@@ -49,7 +49,7 @@ export default function Hero({ track }) {
           </div>
         </div>
 
-        <div className="relative -mx-1 aspect-[618/294] sm:mx-auto sm:w-11/12 lg:col-span-5 lg:-ml-14 lg:-mr-8 lg:w-auto xl:-ml-20 xl:-mr-14">
+        <div className="relative -mx-2 my-3 aspect-[2/1] sm:mx-auto sm:my-0 sm:w-11/12 sm:aspect-[536/212] lg:col-span-5 lg:ml-10 lg:-mr-6 lg:w-auto lg:aspect-[536/240] xl:-ml-12 xl:mr-[max(-5rem,calc((1280px-100vw)/2-1rem))]">
           <CarArt label={h.artLabel} className="absolute inset-0" />
         </div>
 

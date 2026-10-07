@@ -97,61 +97,19 @@
 .reveal { transition: opacity .9s var(--ease-out-expo), transform .9s var(--ease-out-expo); }
 .js .reveal:not(.is-visible) { opacity: 0; transform: translateY(24px); }
 
-/* ——— Hero: линейный рисунок ———
-   Маска раскрывает его сверху вниз (контуры чуть раньше деталей), по кромке — оранжевый «сканер» с мягким свечением.
-   Только clip-path, transform и opacity. Ховер — едва заметный наклон и подсветка линий под курсором (JS ставит --mx/--my/--rx…). */
-.art { --reveal: 1.9s; --reveal-ease: cubic-bezier(0.33, 0, 0.2, 1); }
-.art-tilt {
-  position: absolute; inset: 0; overflow: hidden;
-  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translate3d(var(--tx, 0px), var(--ty, 0px), 0);
-  transition: transform .7s var(--ease-out-expo);
-}
-.art-l { position: absolute; inset: 0; width: 100%; height: 100%; }
-.art-lo { animation: art-reveal var(--reveal) var(--reveal-ease) .1s both; }
-.art-ld { animation: art-reveal var(--reveal) var(--reveal-ease) .4s both; }
-/* цветная заливка: приходит после загрузки, проявляется мягко */
-.art-lf { opacity: 0; transition: opacity 1.4s ease-out; animation: art-reveal var(--reveal) var(--reveal-ease) .4s both; }
-.art.is-filled .art-lf { opacity: 1; }
-@keyframes art-reveal {
-  from { clip-path: inset(0 0 100% 0); }
-  to { clip-path: inset(0 0 0 0); }
-}
-.art-scan {
-  position: absolute; left: 0; right: 0; top: 0; height: 100%; pointer-events: none;
+/* ——— Hero: 3D-модель (src/visual/car3d.js) ———
+   canvas проявляется после первого кадра, дальше — шторка сверху вниз со «сканером» по кромке (JS двигает transform);
+   касания не перехватывает (прокрутка на телефоне). Без WebGL — статичный кадр .art-still. */
+.art-3d { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .3s; }
+.art-3d-scan {
+  position: absolute; left: 0; right: 0; top: -100%; height: 100%; pointer-events: none; opacity: 0;
   background:
     linear-gradient(to bottom, transparent calc(100% - 3px), #ff8a3d calc(100% - 1.5px), transparent 100%),
     linear-gradient(to bottom, transparent calc(100% - 46px), rgb(255 106 0 / .16) calc(100% - 2px), transparent 100%);
   filter: drop-shadow(0 0 6px rgb(255 106 0 / .7));
-  transform: translateY(-100%); opacity: 0;
-  animation: art-scan var(--reveal) var(--reveal-ease) .1s both;
 }
-@keyframes art-scan {
-  0% { transform: translateY(-100%); opacity: 1; }
-  90% { opacity: 1; }
-  100% { transform: translateY(0); opacity: 0; }
-}
-/* редкий блик по линиям машины: узкая полоса маски проходит слева направо раз в ~10 с */
-.art-glint {
-  opacity: .85;
-  -webkit-mask-image: linear-gradient(100deg, transparent 44%, #000 50%, transparent 56%);
-  mask-image: linear-gradient(100deg, transparent 44%, #000 50%, transparent 56%);
-  -webkit-mask-size: 300% 100%; mask-size: 300% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-  -webkit-mask-position: 100% 0; mask-position: 100% 0;
-  animation: art-glint 10s ease-in-out 3.2s infinite;
-}
-@keyframes art-glint {
-  0% { -webkit-mask-position: 100% 0; mask-position: 100% 0; }
-  16%, 100% { -webkit-mask-position: 0% 0; mask-position: 0% 0; }
-}
-.art-hl {
-  opacity: 0; transition: opacity .4s;
-  -webkit-mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), #000 0, transparent 22%);
-  mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), #000 0, transparent 22%);
-}
-.art[data-hover] .art-hl { opacity: .5; }
-/* рисунок ниже первого экрана ждёт появления (ставит CarArt) */
-.art-wait .art-lo, .art-wait .art-ld, .art-wait .art-lf { animation: none; clip-path: inset(0 0 100% 0); }
-.art-wait .art-scan, .art-wait .art-glint { animation: none; opacity: 0; }
+.art-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: art-still-in .6s ease-out both; }
+@keyframes art-still-in { from { opacity: 0; } }
 
 /* ——— Карточки треков: в покое фото + название; ховер — фото тускнеет, проявляется подзаголовок ——— */
 .track-photo { transition: transform .28s ease-out, filter .28s ease-out; }
@@ -267,9 +225,6 @@ details[open] .plus { transform: rotate(45deg); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .js .reveal:not(.is-visible), .js .gal:not(.is-visible) .gal-item { opacity: 1; transform: none; }
-  .art-lo, .art-ld, .art-lf { animation: none; clip-path: none; }
-  .art-scan, .art-glint, .art-hl { display: none; }
-  .art-tilt { transform: none; }
   .rail-dot { display: none; }
 }
 
