@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo.jsx'
 import CtaButton from './CtaButton.jsx'
-import { COPY, LINKS } from '../content/copy.js'
+import Icon from './Icon.jsx'
+import PhoneLink from './PhoneLink.jsx'
+import { COPY, LEGAL, LINKS } from '../content/copy.js'
 import { TRACKS } from '../content/tracks.js'
 
 /**
@@ -31,15 +33,25 @@ export default function Header({ track }) {
             </Link>
           ))}
         </nav>
-        {track ? (
-          <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
-            {COPY.exclusive.cta}
-          </CtaButton>
-        ) : (
-          <CtaButton href={LINKS.channel} goal="cta_header" className="!min-h-11 !px-4 !text-sm">
-            {COPY.header.cta}
-          </CtaButton>
-        )}
+        <div className="flex items-center gap-1 lg:gap-5">
+          {/* номер: с 1024 px — текстом рядом с CTA, тише кнопки; на телефоне — трубка 44×44 */}
+          <PhoneLink
+            aria-label={`Позвонить: ${LEGAL.phone}`}
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-md text-muted transition-colors hover:text-text lg:hidden"
+          >
+            <Icon name="phone" size={22} />
+          </PhoneLink>
+          <PhoneLink className="hidden whitespace-nowrap rounded text-sm font-semibold tabular-nums text-muted transition-colors hover:text-text lg:inline" />
+          {track ? (
+            <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
+              {COPY.exclusive.cta}
+            </CtaButton>
+          ) : (
+            <CtaButton href={LINKS.boris} goal="cta_header" className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
+              {COPY.header.cta}
+            </CtaButton>
+          )}
+        </div>
       </div>
     </header>
     <nav aria-label="Треки" className="border-b border-line bg-bg md:hidden">

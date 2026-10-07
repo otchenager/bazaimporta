@@ -40,14 +40,19 @@ bash ~/regru.sh deploy
 - Если `verify` пишет «нет CSP» — включить модуль `mod_headers` (обычно включён).
 
 ## После выкладки — руками (3 минуты)
-- Открыть сайт с телефона из Telegram: главная → «Вступить бесплатно» ведёт в канал; «Кто ты?» → трек.
-- На страницах треков кнопки «Вступить в базу» ведут к боту Бориса (ссылка — `BORIS_BOT_URL` в `frontend/src/content/copy.js`).
+- Открыть сайт с телефона из Telegram: на всех страницах «Вступить в базу» ведёт к боту Бориса (`BORIS_BOT_URL` в `frontend/src/content/copy.js`);
+  в канал ведёт только карточка «Бесплатный канал» в тарифах; «Кто ты?» → трек.
+- Тап по номеру в шапке (трубка) и в подвале — сразу звонок на +7 (985) 526-69-61.
+- `https://www.bazaimporta.ru/…` отдаёт 301 на `https://bazaimporta.ru/…`.
 - В треке «Есть опыт» кнопка «Закрытый канал — 4 990 ₽» ведёт в @bazaimporta_bot, оплата открывается.
 - Старый адрес `/profi/` отдаёт 301 на `/est-opyt/`.
 - Отправить ссылку на сайт в Telegram — превью с картинкой (`/og.jpg`). Если превью старое — @WebpageBot → «обновить».
 - Метрика → Цели: создать JavaScript-события `cta_hero`, `cta_header`, `cta_sticky`, `cta_final`, `cta_pricing_free`, `cta_paid`,
   `cta_track_newbie`, `cta_track_experienced`, `cta_track_personal`, `cta_exclusive_newbie`, `cta_exclusive_experienced`,
-  `cta_exclusive_personal`. Цель `cta_track_pro` больше не отправляется.
+  `cta_exclusive_personal`, `faq_pay_bot`, `phone_click`, `cta_404`, `cta_thanks`. Цель `cta_track_pro` больше не отправляется.
+  С раунда 5 `cta_hero`, `cta_header`, `cta_sticky`, `cta_final` ведут в бот Бориса, а не в канал (имена целей прежние).
+- Счётчик работает только на bazaimporta.ru / www.bazaimporta.ru. Проверка на `npm run preview`: в `public/metrika.js`
+  временно `ALLOW_ANY_HOST = true`, открыть `?_ym_debug=1`, после проверки вернуть `false`.
 
 ## Пересборка (если правили тексты)
 ```bash

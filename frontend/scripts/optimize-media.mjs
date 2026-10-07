@@ -31,11 +31,6 @@ for (const f of files) {
 
 fs.writeFileSync(path.join(out, 'sizes.json'), JSON.stringify(sizes, null, 1) + '\n')
 
-// Open Graph image source: wide crop of the Huracán handover photo
-await sharp(path.join(src, 'lamb.jpg'))
-  .rotate()
-  .resize({ width: 1200, height: 630, fit: 'cover', position: 'attention' })
-  .jpeg({ quality: 80, mozjpeg: true })
-  .toFile(path.join(root, 'scripts/og-photo.jpg'))
+// OG-картинка — из рисунка hero (scripts/og.html → scripts/render-og.mjs), фото для неё не нужно
 
 console.log(`optimized ${files.length} photos → ${path.relative(root, out)}`)

@@ -15,7 +15,7 @@ export default function ThankYou() {
       <h1 className="h-section">{t.title}</h1>
       <p className="text-lg text-muted">{t.text}</p>
       <div className="flex w-full flex-col gap-3 sm:flex-row">
-        <CtaButton href={LINKS.channel} goal="cta_thanks">{t.cta}</CtaButton>
+        <CtaButton href={LINKS.support} goal="cta_thanks">{t.cta}</CtaButton>
         <Link to="/" className="btn btn-ghost">{t.home}</Link>
       </div>
     </main>

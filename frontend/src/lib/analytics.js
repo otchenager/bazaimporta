@@ -1,5 +1,5 @@
 // Яндекс Метрика: счётчик подключает /metrika.js (public/metrika.js, тег в index.html).
-// Без счётчика (localhost, блокировщик) функции молча ничего не делают: клик по CTA всё равно уводит в Telegram.
+// Без счётчика (не боевой домен, блокировщик) функции молча ничего не делают: клик по CTA всё равно уводит в Telegram.
 export const YM_ID = 113396195
 
 function ym(...args) {
@@ -18,5 +18,5 @@ export function track(goal, params) {
 
 /** Хит при переходе внутри SPA (React Router). Первый хит отправляет сам счётчик при init. */
 export function hit(url, referer) {
-  ym('hit', url, { referer })
+  ym('hit', url, { title: document.title, referer })
 }

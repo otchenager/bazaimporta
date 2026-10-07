@@ -1,0 +1,42 @@
+{
+  "/": {
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "LCP": "1.7 s",
+    "CLS": "0",
+    "TBT": "110 ms",
+    "consoleErrors": 0
+  },
+  "/s-nulya/": {
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "LCP": "1.7 s",
+    "CLS": "0",
+    "TBT": "90 ms",
+    "consoleErrors": 0
+  },
+  "/est-opyt/": {
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "LCP": "1.7 s",
+    "CLS": "0",
+    "TBT": "100 ms",
+    "consoleErrors": 0
+  },
+  "/dlya-sebya/": {
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "LCP": "1.7 s",
+    "CLS": "0.013",
+    "TBT": "90 ms",
+    "consoleErrors": 0
+  }
+}

@@ -1,10 +1,14 @@
 /* Яндекс Метрика, счётчик 113396195. Внешний файл, а не инлайн-скрипт, — чтобы не ослаблять CSP (см. public/.htaccess).
    Хиты при переходах внутри SPA и цели на CTA отправляет приложение (src/lib/analytics.js).
-   На localhost счётчик молчит, если в адресе нет ?_ym_debug=1 — чтобы не засорять статистику разработкой. */
+   Счётчик работает только на боевом домене: localhost, 127.0.0.1, превью и чужие хосты не засоряют статистику.
+   ALLOW_ANY_HOST = true — временно, для проверки на `npm run preview` с ?_ym_debug=1. В репозитории всегда false. */
 (function () {
   var ID = 113396195
-  var host = location.hostname
-  if ((host === 'localhost' || host === '127.0.0.1') && location.search.indexOf('_ym_debug') < 0) return
+  var ALLOW_ANY_HOST = false
+  var HOSTS = ['bazaimporta.ru', 'www.bazaimporta.ru']
+  if (!ALLOW_ANY_HOST && HOSTS.indexOf(location.hostname) < 0) return
+  // защита от повторного подключения файла: init — ровно один раз
+  if (window.BAZA_YM_ID) return
 
   window.BAZA_YM_ID = ID
   // В счётчике включён ecommerce: "dataLayer" — массив должен существовать до инициализации

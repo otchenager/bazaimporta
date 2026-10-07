@@ -18,8 +18,12 @@ let BORIS = '';
   await p.goto(base + '/', { waitUntil: 'load' });
   const L = await links(p);
   const by = (g) => L.filter((l) => l.goal === g).map((l) => l.href);
-  const homeChannel = ['cta_header', 'cta_hero', 'cta_sticky', 'cta_final', 'cta_pricing_free'].every((g) => by(g).length && by(g).every((h) => h === CHANNEL));
-  check('home: header/hero/sticky/final/free → канал', homeChannel, JSON.stringify(Object.fromEntries(['cta_header', 'cta_hero', 'cta_sticky', 'cta_final', 'cta_pricing_free'].map((g) => [g, by(g)]))));
+  // раунд 5: главный CTA главной (шапка, hero, липкая, финал) — «Вступить в базу» → Борис; канал — только карточка тарифа
+  const main = ['cta_header', 'cta_hero', 'cta_sticky', 'cta_final'];
+  const homeBoris = main.every((g) => by(g).length && L.filter((l) => l.goal === g).every((l) => l.href === BOT && l.text === 'Вступить в базу'));
+  check('home: header/hero/sticky/final «Вступить в базу» → Борис', homeBoris, JSON.stringify(Object.fromEntries(main.map((g) => [g, by(g)]))));
+  const chLinks = await p.$$eval('a[href^="https://t.me/bazaimporta"]', (as) => as.filter((a) => a.getAttribute('href') === 'https://t.me/bazaimporta').map((a) => a.dataset.goal || a.textContent.trim()));
+  check('home: ссылка на канал — только карточка «Бесплатный канал»', chLinks.length === 1 && chLinks[0] === 'cta_pricing_free', JSON.stringify(chLinks));
   check('home: тариф «Закрытый канал» → бот оплаты', by('cta_paid').length > 0 && by('cta_paid').every((h) => h === BOT));
   check('home: нет CTA треков (cta_exclusive_*)', !L.some((l) => l.goal.startsWith('cta_exclusive')));
   check('все внешние CTA: target=_blank, rel=noopener', L.filter((l) => /^https?:/.test(l.href)).every((l) => l.target === '_blank' && l.rel.includes('noopener')));
@@ -32,7 +36,7 @@ let BORIS = '';
     const ex = L.filter((l) => l.goal === `cta_exclusive_${id}`);
     const exPlaces = await p.$$eval(`a[data-goal="cta_exclusive_${id}"]`, (as) => as.map((a) => a.closest('header') ? 'header' : a.closest('.sticky-cta') ? 'sticky' : a.closest('section')?.id));
     check(`${slug}: «Вступить в базу» в шапке, hero, липкой кнопке, блоке цены → Борис`, ['header', 'hero', 'sticky', 'track'].every((x) => exPlaces.includes(x)) && ex.every((l) => l.href === BORIS && l.text === 'Вступить в базу'), exPlaces.join(','));
-    const wrong = L.filter((l) => !l.goal.startsWith('cta_exclusive') && !['cta_paid', 'cta_pricing_free', 'faq_pay_bot'].includes(l.goal) && !l.goal.startsWith('cta_track_'));
+    const wrong = L.filter((l) => !l.goal.startsWith('cta_exclusive') && !['cta_paid', 'cta_pricing_free', 'faq_pay_bot', 'phone_click'].includes(l.goal) && !l.goal.startsWith('cta_track_'));
     check(`${slug}: прочих CTA нет (кроме тарифов и карточек треков)`, wrong.length === 0, JSON.stringify(wrong));
     const paid = L.filter((l) => l.goal === 'cta_paid');
     check(`${slug}: тарифы → бот оплаты / бесплатный канал`, paid.every((l) => l.href === BOT) && L.filter((l) => l.goal === 'cta_pricing_free').every((l) => l.href === CHANNEL));
@@ -322,11 +326,17 @@ let BORIS = '';
   check('404 status + page', r404.status() === 404 && (await q.content()).includes('Такой страницы нет'));
   await ctx.close();
 }
+// metrika.js на localhost молчит (только боевой домен) — для проверок Метрики отдаём его с флагом ALLOW_ANY_HOST = true
+const ymAnyHost = async (ctx) => {
+  const src = await (await fetch(base + '/metrika.js')).text();
+  await ctx.route('**/metrika.js', (r) => r.fulfill({ contentType: 'text/javascript', body: src.replace('var ALLOW_ANY_HOST = false', 'var ALLOW_ANY_HOST = true') }));
+};
 // 7. Метрика: hit при смене маршрута (первый не дублируется), reachGoal на CTA. tag.js не грузим — ym подменён.
 {
   const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
   await ctx.route(/mc\.yandex\.(ru|com)/, (r) => r.abort());
   await ctx.addInitScript(() => { window.__ym = []; window.ym = (...a) => window.__ym.push(a); });
+  await ymAnyHost(ctx);
   const p = await ctx.newPage();
   ctx.on('page', (np) => np !== p && np.close().catch(() => {}));
   await p.goto(base + '/?_ym_debug=1', { waitUntil: 'load' });
@@ -375,6 +385,7 @@ let BORIS = '';
   const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
   await ctx.route(/mc\.yandex\.(ru|com)/, (r) => r.abort());
   await ctx.addInitScript(() => { window.__ym = []; window.ym = (...a) => window.__ym.push(a); });
+  await ymAnyHost(ctx);
   const p = await ctx.newPage();
   ctx.on('page', (np) => np !== p && np.close().catch(() => {}));
   for (const u of ['/', '/est-opyt/']) {

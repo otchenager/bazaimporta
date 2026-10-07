@@ -39,7 +39,7 @@ export default function StickyCta({ track }) {
           {COPY.exclusive.cta}
         </CtaButton>
       ) : (
-        <CtaButton href={LINKS.channel} goal="cta_sticky" className="w-full" tabIndex={hidden ? -1 : 0}>
+        <CtaButton href={LINKS.boris} goal="cta_sticky" className="w-full" tabIndex={hidden ? -1 : 0}>
           {COPY.sticky.cta}
         </CtaButton>
       )}

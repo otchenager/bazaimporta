@@ -14,7 +14,7 @@ export default function NotFound() {
       <h1 className="h-section">{COPY.notFound.title}</h1>
       <div className="flex w-full flex-col gap-3 sm:flex-row">
         <Link to="/" className="btn btn-ghost">{COPY.notFound.cta}</Link>
-        <CtaButton href={LINKS.channel} goal="cta_404">{COPY.header.cta}</CtaButton>
+        <CtaButton href={LINKS.boris} goal="cta_404">{COPY.header.cta}</CtaButton>
       </div>
     </main>
   )

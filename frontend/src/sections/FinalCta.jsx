@@ -16,7 +16,7 @@ export default function FinalCta({ track }) {
               {COPY.exclusive.cta}
             </CtaButton>
           ) : (
-            <CtaButton href={LINKS.channel} goal="cta_final" className="mt-8 w-full sm:w-auto">
+            <CtaButton href={LINKS.boris} goal="cta_final" className="mt-8 w-full sm:w-auto">
               {f.cta}
             </CtaButton>
           )}

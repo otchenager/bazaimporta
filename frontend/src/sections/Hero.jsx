@@ -1,6 +1,6 @@
 import CtaButton from '../components/CtaButton.jsx'
 import Icon from '../components/Icon.jsx'
-import HandshakeArt from '../visual/HandshakeArt.jsx'
+import CarArt from '../visual/CarArt.jsx'
 import { COPY, LINKS } from '../content/copy.js'
 
 export default function Hero({ track }) {
@@ -37,7 +37,7 @@ export default function Hero({ track }) {
                 {COPY.exclusive.cta}
               </CtaButton>
             ) : (
-              <CtaButton href={LINKS.channel} goal="cta_hero" className="w-full sm:w-auto">
+              <CtaButton href={LINKS.boris} goal="cta_hero" className="w-full sm:w-auto">
                 {h.cta}
               </CtaButton>
             )}
@@ -49,8 +49,8 @@ export default function Hero({ track }) {
           </div>
         </div>
 
-        <div className="relative -mx-2 aspect-[670/510] sm:mx-auto sm:w-4/5 lg:col-span-5 lg:-ml-8 lg:-mr-12 lg:w-auto xl:-mr-20">
-          <HandshakeArt label={h.artLabel} className="absolute inset-0" />
+        <div className="relative -mx-1 aspect-[618/294] sm:mx-auto sm:w-11/12 lg:col-span-5 lg:-ml-14 lg:-mr-8 lg:w-auto xl:-ml-20 xl:-mr-14">
+          <CarArt label={h.artLabel} className="absolute inset-0" />
         </div>
 
         <p className="border-t border-line pt-6 font-display text-2xl font-bold uppercase leading-tight sm:text-4xl lg:col-span-12">

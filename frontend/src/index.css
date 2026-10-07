@@ -109,13 +109,9 @@
 .art-l { position: absolute; inset: 0; width: 100%; height: 100%; }
 .art-lo { animation: art-reveal var(--reveal) var(--reveal-ease) .1s both; }
 .art-ld { animation: art-reveal var(--reveal) var(--reveal-ease) .4s both; }
-/* цветная заливка: приходит после загрузки, проявляется мягко; детали людей поверх цвета — тёмной тушью */
+/* цветная заливка: приходит после загрузки, проявляется мягко */
 .art-lf { opacity: 0; transition: opacity 1.4s ease-out; animation: art-reveal var(--reveal) var(--reveal-ease) .4s both; }
 .art.is-filled .art-lf { opacity: 1; }
-.art.is-filled .ink { stroke: #24180f; stroke-opacity: .78; transition: stroke .8s; }
-/* лица в заливке нарисованы подробнее (scripts/handshake_faces.py) — упрощённые линии лиц уходят вместе с её появлением */
-.art .lface { transition: opacity 1.4s ease-out; }
-.art.is-filled .lface { opacity: 0; }
 @keyframes art-reveal {
   from { clip-path: inset(0 0 100% 0); }
   to { clip-path: inset(0 0 0 0); }
@@ -153,7 +149,7 @@
   mask-image: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), #000 0, transparent 22%);
 }
 .art[data-hover] .art-hl { opacity: .5; }
-/* рисунок ниже первого экрана ждёт появления (ставит HandshakeArt) */
+/* рисунок ниже первого экрана ждёт появления (ставит CarArt) */
 .art-wait .art-lo, .art-wait .art-ld, .art-wait .art-lf { animation: none; clip-path: inset(0 0 100% 0); }
 .art-wait .art-scan, .art-wait .art-glint { animation: none; opacity: 0; }
 

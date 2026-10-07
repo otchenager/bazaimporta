@@ -53,7 +53,7 @@ export function headHtml(pathname) {
         legalName: LEGAL.entityName,
         taxID: LEGAL.inn,
         email: LEGAL.email,
-        telephone: LEGAL.phone,
+        telephone: LEGAL.phoneE164,
       }),
       jsonLd({
         '@context': 'https://schema.org',

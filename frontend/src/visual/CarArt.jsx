@@ -1,22 +1,23 @@
 import { useEffect, useRef } from 'react'
-import outlines from './handshake-o.svg?raw'
-import details from './handshake-d.svg?raw'
-import fillUrl from './handshake-fill.svg?url'
+import outlines from './car-o.svg?raw'
+import details from './car-d.svg?raw'
+import fillUrl from './car-fill.svg?url'
 
-// Линейный рисунок «рукопожатие у Lamborghini Huracán» (scripts/handshake-lineart.py + ручные линии handshake_people.py).
+// Линейный рисунок Lamborghini Huracán (scripts/car-lineart.py). Передок, закрытый на исходном фото людьми,
+// восстановлен по симметрии (scripts/hero-car-restore.py).
 // Встроен в HTML, а не <img>: не становится LCP-картинкой и не ждёт отдельного запроса.
 //
 // Появление — чистый CSS (работает до загрузки JS): маска раскрывает рисунок сверху вниз, по кромке идёт оранжевый «сканер»;
 // контуры проявляются чуть раньше деталей. Дальше рисунок статичен, изредка по машине пробегает блик.
-// Цветная заливка (scripts/handshake-fill.py, ~55 КБ gzip) грузится после загрузки страницы и плавно проявляется под линиями;
-// пока её нет (или без JS) — тот же рисунок светлыми линиями. Детали людей поверх цвета становятся тёмной «тушью» (.ink).
+// Цветная заливка (scripts/car-fill.py, ~15 КБ gzip) грузится после загрузки страницы и плавно проявляется под линиями;
+// пока её нет (или без JS) — тот же рисунок светлыми линиями.
 // Ховер (только мышь): наклон ≤ 2.5°, сдвиг ≤ 5 px, линии под курсором ярче. prefers-reduced-motion — всё выключено.
-const VIEWBOX = '0 0 670 510'
+export const VIEWBOX = '0 0 618 294'
 const prep = (svg) => ({ __html: svg.replace('<svg ', '<svg width="100%" height="100%" aria-hidden="true" focusable="false" ') })
 const OUTLINES = prep(outlines)
 const DETAILS = prep(details)
 
-export default function HandshakeArt({ label, className = '' }) {
+export default function CarArt({ label, className = '' }) {
   const ref = useRef(null)
 
   const fillRef = useRef(null)
@@ -104,9 +105,7 @@ export default function HandshakeArt({ label, className = '' }) {
         {/* подсветка линий под курсором */}
         <svg className="art-l art-hl" viewBox={VIEWBOX} aria-hidden="true" focusable="false" fill="none" stroke="#fff" strokeWidth="1.3" strokeLinecap="round">
           <use href="#art-car-o" />
-          <use href="#art-ppl-o" />
           <use href="#art-car-d" />
-          <use href="#art-ppl-d" />
         </svg>
         <span className="art-scan" aria-hidden="true" />
       </div>
