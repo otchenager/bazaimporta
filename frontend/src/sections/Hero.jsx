@@ -1,7 +1,8 @@
 import CtaButton from '../components/CtaButton.jsx'
 import Icon from '../components/Icon.jsx'
-import CarArt from '../visual/CarArt.jsx'
+import HeroVideo from '../visual/HeroVideo.jsx'
 import { COPY, LINKS } from '../content/copy.js'
+import { track as reachGoal } from '../lib/analytics.js'
 
 export default function Hero({ track }) {
   const h = COPY.hero
@@ -41,17 +42,22 @@ export default function Hero({ track }) {
                 {h.cta}
               </CtaButton>
             )}
-            {/* на телефоне — без второй кнопки: выбор пути дублирует меню треков под шапкой, а рисунок помещается в первый экран */}
-            <a href={track ? '#track' : '#tracks'} className={`btn btn-ghost w-full sm:w-auto ${track ? '' : 'max-sm:!hidden'}`}>
-              <span>{track ? 'Что получишь' : h.secondary}</span>
+            {/* вторичная кнопка — к лид-форме (плавный скролл: scroll-behavior в index.css) */}
+            <a href="#lead" className="btn btn-ghost w-full sm:w-auto" data-goal="lead_cta_hero" onClick={() => reachGoal('lead_cta_hero')}>
+              <span>{h.consult}</span>
               <Icon name="down" size={18} className="arrow" />
             </a>
           </div>
         </div>
 
-        <div className="relative -mx-2 my-3 aspect-[2/1] sm:mx-auto sm:my-0 sm:w-11/12 sm:aspect-[536/212] lg:col-span-5 lg:ml-10 lg:-mr-6 lg:w-auto lg:aspect-[536/240] xl:-ml-12 xl:mr-[max(-5rem,calc((1280px-100vw)/2-1rem))]">
-          <CarArt label={h.artLabel} className="absolute inset-0" />
-        </div>
+        {/* на телефоне видео — под заголовком и кнопками: оффер и CTA остаются в первом экране и читаются без подложки */}
+        <HeroVideo
+          alt={h.videoAlt}
+          film={h.film}
+          pauseLabel={h.pauseLabel}
+          playLabel={h.playLabel}
+          className="aspect-video lg:col-span-5 lg:aspect-[4/3] xl:aspect-[16/11]"
+        />
 
         <p className="border-t border-line pt-6 font-display text-2xl font-bold uppercase leading-tight sm:text-4xl lg:col-span-12">
           {h.team.split('200+')[0]}

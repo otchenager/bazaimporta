@@ -1,0 +1,58 @@
+{
+  "/": {
+    "perf": 97,
+    "a11y": 100,
+    "bp": 100,
+    "seo": 100,
+    "LCP": "2.4 s",
+    "CLS": "0.012",
+    "TBT": "90 ms",
+    "weight": "Total size was 1,612 KiB",
+    "lcpEl": "<img src=\"http://localhost:4183/media/hero-poster-960.9d2e781c.avif\" width=\"1280\" height=\"",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  },
+  "/s-nulya/": {
+    "perf": 98,
+    "a11y": 100,
+    "bp": 100,
+    "seo": 100,
+    "LCP": "2.1 s",
+    "CLS": "0",
+    "TBT": "130 ms",
+    "weight": "Total size was 1,204 KiB",
+    "lcpEl": "<img src=\"http://localhost:4183/media/hero-poster-960.9d2e781c.avif\" width=\"1280\" height=\"",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  },
+  "/est-opyt/": {
+    "perf": 97,
+    "a11y": 100,
+    "bp": 100,
+    "seo": 100,
+    "LCP": "2.0 s",
+    "CLS": "0",
+    "TBT": "180 ms",
+    "weight": "Total size was 1,204 KiB",
+    "lcpEl": "<img src=\"http://localhost:4183/media/hero-poster-960.9d2e781c.avif\" width=\"1280\" height=\"",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  },
+  "/dlya-sebya/": {
+    "perf": 97,
+    "a11y": 100,
+    "bp": 100,
+    "seo": 100,
+    "LCP": "2.1 s",
+    "CLS": "0.013",
+    "TBT": "160 ms",
+    "weight": "Total size was 1,204 KiB",
+    "lcpEl": "<img src=\"http://localhost:4183/media/hero-poster-960.9d2e781c.avif\" width=\"1280\" height=\"",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  }
+}

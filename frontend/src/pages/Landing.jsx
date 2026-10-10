@@ -11,6 +11,7 @@ import HowItWorks from '../sections/HowItWorks.jsx'
 import Pricing from '../sections/Pricing.jsx'
 import FAQ from '../sections/FAQ.jsx'
 import FinalCta from '../sections/FinalCta.jsx'
+import LeadForm from '../components/LeadForm.jsx'
 import { trackBySlug } from '../content/tracks.js'
 import { metaFor } from '../lib/seo.js'
 
@@ -19,6 +20,7 @@ export default function Landing() {
   const { pathname, state, key } = useLocation()
   const track = trackBySlug(pathname)
   const first = useRef(true)
+  const leadFirst = track?.id === 'personal'
 
   useEffect(() => {
     if (first.current) {
@@ -40,12 +42,15 @@ export default function Landing() {
       <Header track={track} />
       <main id="main">
         <Hero track={track} />
+        {/* «Для себя»: заявка — главный сценарий, форма сразу под hero; на остальных — перед FAQ */}
+        {leadFirst && <LeadForm key={track.id} track={track} />}
         {/* на странице трека сначала его содержание (H1 → лид → пункты), потом остальные треки */}
         {track && <TrackDetail key={track.id} track={track} />}
         <TrackPicker activeId={track?.id} />
         <Trust />
         <HowItWorks />
         <Pricing track={track} />
+        {!leadFirst && <LeadForm key={track?.id ?? 'home'} track={track} />}
         <FAQ />
         <FinalCta track={track} />
       </main>

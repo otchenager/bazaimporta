@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import './fonts.js'
 import './index.css'
 import App from './App.jsx'
+import { captureUtm } from './lib/utm.js'
+
+// метки Директа первого захода — до любых переходов внутри SPA
+captureUtm()
 
 const container = document.getElementById('root')
 const app = (

@@ -1,6 +1,7 @@
 // Правила текста из брифа: заголовок ≤ 8 слов, абзац ≤ 110 знаков (≈ 2 строки на 375px).
 import { COPY } from '../src/content/copy.js'
 import { TRACKS } from '../src/content/tracks.js'
+import { missingRequisites } from '../src/content/privacy.js'
 
 const MAX_WORDS = 8, MAX_CHARS = 110
 const problems = []
@@ -19,6 +20,14 @@ for (const t of TRACKS) {
   if (t.title) head(`${t.id}.title`, t.title)
   if (t.promise) para(`${t.id}.promise`, t.promise)
   para(`${t.id}.pain`, t.pain)
+}
+
+// --release: перед выкладкой реквизиты оператора ПДн должны быть заполнены (src/content/privacy.js)
+const missing = missingRequisites()
+if (missing.length) {
+  const msg = `Политика ПДн: не заполнены реквизиты ${missing.map(([, v]) => v).join(', ')}`
+  if (process.argv.includes('--release')) problems.push(msg)
+  else console.warn('ВНИМАНИЕ: ' + msg)
 }
 
 if (problems.length) {

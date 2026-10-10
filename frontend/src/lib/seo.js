@@ -1,5 +1,7 @@
 import { COPY, LEGAL, LINKS } from '../content/copy.js'
 import { TRACKS, trackBySlug } from '../content/tracks.js'
+import { PRIVACY, CONSENT } from '../content/privacy.js'
+import HERO_MEDIA from '../visual/hero-media.json'
 
 export const SITE_URL = 'https://bazaimporta.ru'
 
@@ -18,11 +20,16 @@ function jsonLd(obj) {
 export function metaFor(pathname) {
   const track = trackBySlug(pathname)
   if (pathname === '/thank-you/') return { title: 'Спасибо за оплату — BAZA Import', description: HOME.description, noindex: true, path: pathname }
+  for (const doc of [PRIVACY, CONSENT]) {
+    if (pathname === doc.path) return { title: `${doc.title} — BAZA Import`, description: `${doc.title} на сайте bazaimporta.ru.`, noindex: true, path: pathname }
+  }
   if (pathname === '/404') return { title: 'Страница не найдена — BAZA Import', description: HOME.description, noindex: true, path: '/' }
   return { ...(track ? track.seo : HOME), path: pathname }
 }
 
 /** HTML для <head> пререндеренной страницы. */
+const track = (pathname) => trackBySlug(pathname)
+
 export function headHtml(pathname) {
   const m = metaFor(pathname)
   const url = SITE_URL + m.path
@@ -41,6 +48,12 @@ export function headHtml(pathname) {
     '<meta property="og:image:height" content="630">',
     '<meta name="twitter:card" content="summary_large_image">',
   ]
+  // постер видео в hero — LCP: грузим одновременно с HTML, не дожидаясь разбора <body>
+  if (pathname === '/' || track(pathname)) {
+    tags.push(
+      `<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="${HERO_MEDIA['hero-poster-960.avif']} 960w, ${HERO_MEDIA['hero-poster-1280.avif']} 1280w" imagesizes="(min-width: 1024px) 40vw, 100vw">`,
+    )
+  }
   if (!m.noindex) {
     tags.push(
       jsonLd({
@@ -70,4 +83,4 @@ export function headHtml(pathname) {
   return tags.join('\n    ')
 }
 
-export const PRERENDER_ROUTES = ['/', ...TRACKS.map((t) => t.slug), '/thank-you/']
+export const PRERENDER_ROUTES = ['/', ...TRACKS.map((t) => t.slug), '/thank-you/', PRIVACY.path, CONSENT.path]

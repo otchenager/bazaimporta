@@ -15,6 +15,7 @@
   --color-accent: #ff6a00;
   --color-accent-hover: #ff7f24;
   --color-accent-ink: #120700;
+  --color-danger: #ff7a6b;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -97,19 +98,54 @@
 .reveal { transition: opacity .9s var(--ease-out-expo), transform .9s var(--ease-out-expo); }
 .js .reveal:not(.is-visible) { opacity: 0; transform: translateY(24px); }
 
-/* ——— Hero: 3D-модель (src/visual/car3d.js) ———
-   canvas проявляется после первого кадра, дальше — шторка сверху вниз со «сканером» по кромке (JS двигает transform);
-   касания не перехватывает (прокрутка на телефоне). Без WebGL — статичный кадр .art-still. */
-.art-3d { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity .3s; }
-.art-3d-scan {
-  position: absolute; left: 0; right: 0; top: -100%; height: 100%; pointer-events: none; opacity: 0;
-  background:
-    linear-gradient(to bottom, transparent calc(100% - 3px), #ff8a3d calc(100% - 1.5px), transparent 100%),
-    linear-gradient(to bottom, transparent calc(100% - 46px), rgb(255 106 0 / .16) calc(100% - 2px), transparent 100%);
-  filter: drop-shadow(0 0 6px rgb(255 106 0 / .7));
+/* ——— Hero: фоновое видео (src/visual/HeroVideo.jsx) ———
+   Постер виден сразу (LCP); видео поверх него проявляется, когда реально пошло воспроизведение. */
+.hero-video { position: relative; overflow: hidden; border-radius: 0.75rem; border: 1px solid var(--color-line); background: var(--color-surface); }
+.hero-video > picture img, .hero-video > video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-video > video { opacity: 0; transition: opacity .6s ease-out; }
+.hero-video[data-playing='true'] > video { opacity: 1; }
+/* затемнение снизу — под кнопками поверх видео */
+.hero-video::after { content: ''; position: absolute; inset: 55% 0 0; background: linear-gradient(to top, rgb(10 10 10 / .7), transparent); pointer-events: none; }
+.hero-video-ui { position: absolute; z-index: 1; left: 0.75rem; right: 0.75rem; bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.hero-film {
+  display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 1rem 0 0.75rem; border-radius: 9999px;
+  background: rgb(10 10 10 / .72); backdrop-filter: blur(6px); border: 1px solid rgb(255 255 255 / .18);
+  font-weight: 600; font-size: 0.95rem; transition: border-color .2s, background-color .2s;
 }
-.art-still { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; animation: art-still-in .6s ease-out both; }
-@keyframes art-still-in { from { opacity: 0; } }
+.hero-film:hover { border-color: var(--color-accent); }
+.hero-film .play { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 9999px; background: var(--color-accent); color: var(--color-accent-ink); }
+.hero-pause { display: grid; place-items: center; width: 2.75rem; height: 2.75rem; margin-left: auto; border-radius: 9999px; background: rgb(10 10 10 / .6); border: 1px solid rgb(255 255 255 / .18); color: var(--color-text); }
+
+/* ——— Лид-форма ——— */
+.lead-label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.95rem; }
+/* 16 px и выше — иначе iOS увеличивает страницу при фокусе; высота 48 px — палец попадает */
+.lead-input {
+  display: block; width: 100%; min-height: 3rem; padding: 0 1rem; border-radius: 0.5rem;
+  border: 1px solid var(--color-line-strong); background: var(--color-bg); color: var(--color-text);
+  font-size: 1rem; line-height: 1.4; transition: border-color .2s;
+}
+.lead-input::placeholder { color: #6e6e76; }
+.lead-input:hover { border-color: #55555e; }
+.lead-input:focus { outline: none; border-color: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent); }
+.lead-input[aria-invalid='true'] { border-color: var(--color-danger); }
+.lead-select {
+  appearance: none; padding-right: 2rem; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23a3a3ab' stroke-width='1.6'%3E%3Cpath d='m2.5 4.5 3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 0.75rem center;
+}
+.num-input { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.lead-choice {
+  display: flex; align-items: center; justify-content: center; min-height: 3rem; padding: 0.25rem 0.5rem; border-radius: 0.5rem;
+  border: 1px solid var(--color-line-strong); background: var(--color-bg); text-align: center; font-weight: 600; line-height: 1.2;
+  cursor: pointer; transition: border-color .2s, background-color .2s, color .2s; color: var(--color-muted);
+}
+.lead-choice:hover { color: var(--color-text); }
+.lead-choice:has(:checked) { border-color: var(--color-accent); background: rgb(255 106 0 / .12); color: var(--color-text); }
+.lead-choice:has(:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.lead-check { flex-shrink: 0; width: 1.5rem; height: 1.5rem; margin-top: 0.1rem; accent-color: var(--color-accent); cursor: pointer; }
+.lead-check[aria-invalid='true'] { outline: 2px solid var(--color-danger); outline-offset: 2px; }
+.lead-trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.btn:disabled { opacity: .6; cursor: default; transform: none; }
 
 /* ——— Карточки треков: в покое фото + название; ховер — фото тускнеет, проявляется подзаголовок ——— */
 .track-photo { transition: transform .28s ease-out, filter .28s ease-out; }

@@ -1,0 +1,58 @@
+{
+  "/": {
+    "perf": 46,
+    "a11y": 100,
+    "bp": 93,
+    "seo": 100,
+    "LCP": "11.8 s",
+    "CLS": "0.011",
+    "TBT": "2,750 ms",
+    "weight": "Total size was 2,015 KiB",
+    "lcpEl": "<img alt=\"\" class=\"art-still\" decoding=\"async\" src=\"/assets/car-still-C8t70JQT.webp\">",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  },
+  "/s-nulya/": {
+    "perf": 72,
+    "a11y": 100,
+    "bp": 93,
+    "seo": 100,
+    "LCP": "1.6 s",
+    "CLS": "0",
+    "TBT": "1,860 ms",
+    "weight": "Total size was 1,606 KiB",
+    "lcpEl": "<p class=\"mt-4 max-w-[52ch] leading-relaxed text-muted sm:text-lg\">",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  },
+  "/est-opyt/": {
+    "perf": 48,
+    "a11y": 100,
+    "bp": 93,
+    "seo": 100,
+    "LCP": "10.2 s",
+    "CLS": "0",
+    "TBT": "1,870 ms",
+    "weight": "Total size was 1,606 KiB",
+    "lcpEl": "<img alt=\"\" class=\"art-still\" decoding=\"async\" src=\"/assets/car-still-C8t70JQT.webp\">",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  },
+  "/dlya-sebya/": {
+    "perf": 48,
+    "a11y": 100,
+    "bp": 93,
+    "seo": 100,
+    "LCP": "10.2 s",
+    "CLS": "0.013",
+    "TBT": "1,890 ms",
+    "weight": "Total size was 1,606 KiB",
+    "lcpEl": "<img alt=\"\" class=\"art-still\" decoding=\"async\" src=\"/assets/car-still-C8t70JQT.webp\">",
+    "a11yFails": [
+      "label-content-name-mismatch"
+    ]
+  }
+}

@@ -79,6 +79,7 @@ const PATHS = {
     </>
   ),
   play: <path d="M8 5.5v13l10.5-6.5z" />,
+  pause: <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" />,
   'chevron-left': <path d="m14.5 5.5-6.5 6.5 6.5 6.5" />,
   'chevron-right': <path d="m9.5 5.5 6.5 6.5-6.5 6.5" />,
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
@@ -92,7 +93,7 @@ const PATHS = {
 }
 
 export default function Icon({ name, size = 24, className = '', strokeWidth = 1.6 }) {
-  const filled = name === 'telegram' || name === 'play'
+  const filled = name === 'telegram' || name === 'play' || name === 'pause'
   return (
     <svg
       width={size}

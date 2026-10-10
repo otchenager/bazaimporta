@@ -54,7 +54,8 @@ for (const route of PRERENDER_ROUTES) {
 page('/404', path.join(dist, '404.html'))
 console.log('prerendered 404.html')
 
-const indexable = PRERENDER_ROUTES.filter((r) => r !== '/thank-you/')
+// служебные и юридические страницы — noindex, в sitemap не идут
+const indexable = PRERENDER_ROUTES.filter((r) => !['/thank-you/', '/privacy/', '/soglasie/'].includes(r))
 const today = new Date().toISOString().slice(0, 10)
 fs.writeFileSync(
   path.join(dist, 'sitemap.xml'),

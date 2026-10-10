@@ -3,6 +3,8 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Landing from './pages/Landing.jsx'
 import ThankYou from './pages/ThankYou.jsx'
 import NotFound from './pages/NotFound.jsx'
+import Legal from './pages/Legal.jsx'
+import { PRIVACY, CONSENT } from './content/privacy.js'
 import { TRACKS } from './content/tracks.js'
 import { hit } from './lib/analytics.js'
 
@@ -35,6 +37,8 @@ export default function App() {
         <Route key={t.oldSlug} path={t.oldSlug} element={<Navigate to={t.slug} replace />} />
       ))}
       <Route path="/thank-you/" element={<ThankYou />} />
+      <Route path={PRIVACY.path} element={<Legal doc={PRIVACY} />} />
+      <Route path={CONSENT.path} element={<Legal doc={CONSENT} />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   )

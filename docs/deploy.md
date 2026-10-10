@@ -35,6 +35,10 @@ bash ~/regru.sh deploy
    - что 404 работает и что `/.git` и `/.env` закрыты;
    - что ссылки на канал и бота на месте и что отдаётся CSP.
 
+## Лид-форма (один раз, до первой выкладки ветки `leadform-video`)
+`~/config/lead-config.php` с BOT_TOKEN и CHAT_ID (шаблон — `deploy/lead-config.example.php`), папка `~/leads`.
+Подробно — `docs/leadform.md`. Выкладка ветки: `BRANCH=leadform-video bash ~/regru.sh deploy`.
+
 ## Один раз в панели reg.ru
 - **SSL → «Перенаправлять на HTTPS»** — включить. В `.htaccess` редирект не прописан: на reg.ru HTTPS обрабатывает фронтовый сервер, и правило могло бы зациклиться.
 - Если `verify` пишет «нет CSP» — включить модуль `mod_headers` (обычно включён).

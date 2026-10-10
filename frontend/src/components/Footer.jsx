@@ -30,6 +30,9 @@ export default function Footer() {
             <a className="underline underline-offset-4 hover:text-text" href={LINKS.offer} target="_blank" rel="noopener">
               {COPY.footer.offer}
             </a>
+            <a className="underline underline-offset-4 hover:text-text" href="/privacy/">
+              {COPY.footer.privacy}
+            </a>
           </p>
         </div>
         <p className="text-sm text-muted">© {new Date().getFullYear()} {COPY.footer.rights}</p>

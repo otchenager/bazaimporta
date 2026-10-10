@@ -1,3 +1,6 @@
 node_modules/
 .env
 .vercel/
+
+# исходник ролика hero (438 МБ, больше лимита GitHub) — нарезку делает scripts/hero-video.mjs в public/media
+src/assets/media/ПРИВЕЗЛИ LAMBORGHINI ИЗ КОРЕИ _720p50.mp4
