@@ -19,7 +19,7 @@ function blocks(lines) {
 export default function Legal({ doc }) {
   return (
     <>
-      <Header />
+      <Header leadHref="/#lead" />
       <main id="main" className="mx-auto max-w-3xl px-4 py-12 sm:px-8 md:py-20">
         <h1 className="h-section">{doc.title}</h1>
         <p className="mt-4 text-sm text-muted">

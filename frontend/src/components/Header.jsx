@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo.jsx'
-import CtaButton from './CtaButton.jsx'
 import Icon from './Icon.jsx'
 import PhoneLink from './PhoneLink.jsx'
-import { COPY, LEGAL, LINKS } from '../content/copy.js'
+import { COPY, LEGAL } from '../content/copy.js'
+import { track as reachGoal } from '../lib/analytics.js'
 import { TRACKS } from '../content/tracks.js'
 
 /**
  * Шапка: логотип, треки (с md — в строке), CTA. На телефоне треки — вкладки под шапкой: три пункта помещаются
  * без бургера и видны сразу; вкладки не липкие, чтобы липкая шапка оставалась низкой (64 px) во встроенном браузере Telegram.
  */
-export default function Header({ track }) {
+export default function Header({ track, leadHref = '#lead' }) {
   const activeSlug = track?.slug
   return (
     <>
@@ -42,15 +42,17 @@ export default function Header({ track }) {
             <Icon name="phone" size={22} />
           </PhoneLink>
           <PhoneLink className="hidden whitespace-nowrap rounded text-sm font-semibold tabular-nums text-muted transition-colors hover:text-text lg:inline" />
-          {track ? (
-            <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
-              {COPY.exclusive.cta}
-            </CtaButton>
-          ) : (
-            <CtaButton href={LINKS.boris} goal="cta_header" className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
-              {COPY.header.cta}
-            </CtaButton>
-          )}
+          {/* справа — к лид-форме внизу страницы (на юридических страницах формы нет — ведём на главную) */}
+          <a
+            href={leadHref}
+            data-goal="lead_cta_header"
+            onClick={() => reachGoal('lead_cta_header')}
+            className="btn btn-primary !min-h-11 !gap-2 !px-3 !text-sm sm:!px-4"
+          >
+            <span className="sm:hidden">{COPY.header.leadShort}</span>
+            <span className="max-sm:hidden">{COPY.header.lead}</span>
+            <Icon name="down" size={18} className="shrink-0" />
+          </a>
         </div>
       </div>
     </header>

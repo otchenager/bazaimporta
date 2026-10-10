@@ -28,7 +28,8 @@ export const LEGAL = {
 }
 
 export const COPY = {
-  header: { cta: 'Вступить в базу' },
+  // в шапке справа — переход к лид-форме (цель lead_cta_header); «Вступить в базу» остаётся в hero, липкой кнопке и финале
+  header: { cta: 'Вступить в базу', lead: 'Получить консультацию', leadShort: 'Консультация' },
 
   hero: {
     kicker: 'Корея · Китай · Япония · Европа',
@@ -41,7 +42,8 @@ export const COPY = {
     consult: 'Получить консультацию',
     // видео вместо 3D: фоновый луп (public/media, scripts/hero-video.mjs) и ссылка на полный ролик
     videoAlt: 'Белый Lamborghini Huracán, привезённый из Кореи, на площадке выдачи',
-    film: { label: 'Смотреть ролик', meta: '24 мин', url: todo('ссылка на полный ролик «Привезли Lamborghini из Кореи» (YouTube / VK / Rutube)') },
+    // полный ролик выдаёт Борис после /start, поэтому кнопка ведёт в его бота
+    film: { label: 'Смотреть ролик', meta: '24 мин', url: BORIS_BOT_URL },
     pauseLabel: 'Остановить видео',
     playLabel: 'Запустить видео',
   },

@@ -15,7 +15,7 @@ const dist = path.resolve(here, distArg), out = path.resolve(here, outArg, 'scre
 fs.mkdirSync(out, { recursive: true })
 const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe'
 const PHP = process.env.PHP_BIN || 'php'
-const [TG, PHPP, WEB] = [8793, 8792, 4182]
+const [TG, PHPP, WEB] = [8795, 8794, 4182] // 8792 занят PHP dev-сервера (vite PHP_API)
 const BASE = `http://localhost:${WEB}`
 
 // ——— окружение ———
@@ -68,6 +68,11 @@ const noCV = (page) => page.addStyleTag({ content: 'main > section { content-vis
   ok(await page.evaluate(() => document.querySelector('.hero-video video').paused), 'hero ушёл с экрана — пауза')
   await page.evaluate(() => window.scrollTo(0, 0))
   await page.waitForTimeout(800)
+  const head = await page.evaluate(() => { const a = document.querySelector('header a.btn'); return { href: a.getAttribute('href'), text: a.innerText.trim() } })
+  ok(head.href === '#lead' && /консультац/i.test(head.text), `шапка справа → лид-форма («${head.text}»)`)
+  const film = await page.evaluate(() => document.querySelector('.hero-film')?.getAttribute('href'))
+  ok(film === 'https://t.me/bazaimporta_bot', `«Смотреть ролик» → бот Бориса (${film})`)
+  ok(Math.round(await page.evaluate(() => document.querySelector('.hero-video video').duration)) === 60, 'луп 60 с')
   await shot(page, '375-home-hero.png')
   ok(errors.length === 0, `без ошибок в консоли ${errors.join(' | ')}`)
   await ctx.close()
@@ -91,6 +96,11 @@ const noCV = (page) => page.addStyleTag({ content: 'main > section { content-vis
 {
   resetRate()
   const { ctx, page, posts, goals } = await open('/')
+  await page.click('header a[href="#lead"]')
+  await page.waitForTimeout(1200)
+  ok((await goals()).includes('lead_cta_header'), 'цель lead_cta_header')
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.waitForTimeout(600)
   await page.click('#hero a[href="#lead"]')
   await page.waitForTimeout(1200)
   ok((await page.evaluate(() => document.getElementById('lead').getBoundingClientRect().top)) < 200, 'кнопка в hero плавно ведёт к форме')
@@ -195,6 +205,7 @@ for (const width of [375, 1440]) {
 }
 {
   const { ctx, page } = await open('/privacy/', { width: 375 })
+  ok((await page.locator('header a.btn').getAttribute('href')) === '/#lead', 'на /privacy/ кнопка шапки ведёт на /#lead')
   await shot(page, '375-privacy.png')
   await ctx.close()
 }

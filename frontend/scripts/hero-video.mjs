@@ -1,13 +1,15 @@
 // Фоновый луп hero из ролика «ПРИВЕЗЛИ LAMBORGHINI ИЗ КОРЕИ» → public/media/ (не в src/assets: видео не идёт через сборку).
 //   FFMPEG=путь/к/ffmpeg node scripts/hero-video.mjs
-// Без звука, 25 к/с. Кусок 7:43–7:55: Huracán во дворе склада (корма, разворот, борт) — без людей в кадре и плашек канала.
+// Без звука, 25 к/с. Кусок 6:49–7:49 (60 с, выбор владельца): Huracán на площадке, облёт, выезд и разворот.
 // Шов лупа незаметен: последние LOOP_FADE с плавно переходят в первый кадр.
 // Выход: hero-{540,720}.<хеш>.{mp4,webm} и постер hero-poster-{960,1280}.<хеш>.{webp,avif} (первый кадр лупа = LCP).
 // Хеш в имени — файлы можно кешировать навсегда (.htaccess); имена для HeroVideo.jsx — в src/visual/hero-media.json.
 // Исходник — 720p, поэтому «десктопная» версия 720p: апскейл до 1080p только раздул бы файл.
+// Кодирование в 2 прохода с целевым битрейтом: мобильная версия 60 с укладывается в ≤ 3 МБ.
 import { execFileSync } from 'node:child_process'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
@@ -16,8 +18,8 @@ const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const SRC = path.join(root, 'src/assets/media/ПРИВЕЗЛИ LAMBORGHINI ИЗ КОРЕИ _720p50.mp4')
 const OUT = path.join(root, 'public/media')
 const FF = process.env.FFMPEG || 'ffmpeg'
-const START = 463
-const LEN = 11.6
+const START = 409
+const LEN = 60.6 // + LOOP_FADE: на выходе ровно 60 с
 const LOOP_FADE = 0.6
 const FPS = 25
 
@@ -30,15 +32,24 @@ const loop =
 const run = (args) => execFileSync(FF, ['-hide_banner', '-loglevel', 'error', '-y', ...args], { stdio: 'inherit' })
 fs.mkdirSync(OUT, { recursive: true })
 
-for (const [h, crf264, crfVp9] of [
-  [540, 28, 43],
-  [720, 26, 41],
+const passlog = path.join(os.tmpdir(), 'hero-video-pass')
+const twoPass = (input, codec, kbps, out, extra = []) => {
+  const common = [...input, '-c:v', codec, '-b:v', `${kbps}k`, '-maxrate', `${Math.round(kbps * 1.5)}k`, '-bufsize', `${kbps * 3}k`, '-passlogfile', passlog, ...extra]
+  run([...common, '-pass', '1', '-f', codec === 'libx264' ? 'mp4' : 'webm', os.devNull])
+  run([...common, '-pass', '2', out])
+}
+
+// [высота, кбит/с H.264, кбит/с VP9]
+for (const [h, kbps264, kbpsVp9] of [
+  [540, 340, 320],
+  [720, 850, 650],
 ]) {
   const vf = `${loop},scale=-2:${h}:flags=lanczos,format=yuv420p`
   const input = ['-ss', String(START), '-t', String(LEN), '-i', SRC, '-an', '-filter_complex', vf]
-  run([...input, '-c:v', 'libx264', '-preset', 'slow', '-crf', String(crf264), '-profile:v', 'high', '-movflags', '+faststart', path.join(OUT, `hero-${h}.mp4`)])
-  run([...input, '-c:v', 'libvpx-vp9', '-crf', String(crfVp9), '-b:v', '0', '-row-mt', '1', '-deadline', 'good', '-cpu-used', '2', path.join(OUT, `hero-${h}.webm`)])
+  twoPass(input, 'libx264', kbps264, path.join(OUT, `hero-${h}.mp4`), ['-preset', 'slow', '-profile:v', 'high', '-movflags', '+faststart'])
+  twoPass(input, 'libvpx-vp9', kbpsVp9, path.join(OUT, `hero-${h}.webm`), ['-row-mt', '1', '-deadline', 'good', '-cpu-used', '2'])
 }
+for (const f of fs.readdirSync(os.tmpdir())) if (f.startsWith('hero-video-pass')) fs.rmSync(path.join(os.tmpdir(), f), { force: true })
 
 // постер — первый кадр лупа (после trim он сдвинут на LOOP_FADE): видео стартует с той же картинки, без скачка
 const png = path.join(OUT, 'poster.tmp.png')
