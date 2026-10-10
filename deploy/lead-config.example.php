@@ -9,4 +9,7 @@ return [
     'BOT_TOKEN' => '123456789:AA...',
     // id чата для заявок: личка (число), группа (-100…) или @username канала
     'CHAT_ID' => '-1001234567890',
+    // необязательно: письмо о заявке. По умолчанию — kirill.malin0vsky@yandex.ru от noreply@bazaimporta.ru
+    // 'MAIL_TO' => 'kirill.malin0vsky@yandex.ru',
+    // 'MAIL_FROM' => 'noreply@bazaimporta.ru',
 ];

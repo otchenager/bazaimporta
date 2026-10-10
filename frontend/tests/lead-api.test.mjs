@@ -30,7 +30,7 @@ before(async () => {
   fs.mkdirSync(path.join(home, 'config'))
   fs.writeFileSync(
     path.join(home, 'config/lead-config.php'),
-    `<?php return ['BOT_TOKEN' => 'TEST:TOKEN', 'CHAT_ID' => '42', 'API_BASE' => 'http://127.0.0.1:${tg.address().port}'];`,
+    `<?php return ['BOT_TOKEN' => 'TEST:TOKEN', 'CHAT_ID' => '42', 'API_BASE' => 'http://127.0.0.1:${tg.address().port}', 'MAIL_LOG' => ${JSON.stringify(path.join(home, 'mail.log'))}];`,
   )
   php = spawn(PHP, ['-S', `127.0.0.1:${PORT}`, '-t', path.join(root, 'public')], { env: { ...process.env, HOME: home }, stdio: 'ignore' })
   for (let i = 0; i < 50; i++) {
@@ -194,4 +194,20 @@ test('CSV не записался → 500, и повтор с тем же клю
   const r2 = await post(body)
   assert.deepEqual(await r2.json(), { ok: true })
   assert.equal(csv().length, c + 1)
+})
+
+test('письмо о заявке: на kirill.malin0vsky@yandex.ru, UTF-8, тема с именем и треком', async () => {
+  const log = path.join(home, 'mail.log')
+  const mails = () => (fs.existsSync(log) ? fs.readFileSync(log, 'utf8').trim().split(/\r?\n/) : [])
+  const before = mails().length
+  const r = await post(valid({ name: 'Анна', car: 'BMW X5' }))
+  assert.equal(r.status, 200)
+  for (let i = 0; i < 40 && mails().length === before; i++) await new Promise((r) => setTimeout(r, 50))
+  const mail = JSON.parse(mails().at(-1))
+  assert.equal(mail.to, 'kirill.malin0vsky@yandex.ru')
+  assert.equal(mail.subject, 'Заявка с сайта: Анна, Для себя')
+  assert.match(mail.body, /Телефон: \+79123456789/)
+  assert.match(mail.body, /Ищет: BMW X5/)
+  assert.match(mail.body, /utm_source=yandex/)
+  assert.ok(mail.headers.some((h) => h.startsWith('From: ') && h.endsWith('<noreply@bazaimporta.ru>')))
 })

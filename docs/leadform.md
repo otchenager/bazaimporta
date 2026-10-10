@@ -5,8 +5,9 @@
   - Где стоит: на главной, «С нуля» и «Есть опыт» — перед FAQ; на «Для себя» — сразу под hero.
   - Вторичная кнопка «Получить консультацию» в hero ведёт к форме. Основная CTA «Вступить в базу» не тронута.
 - **Обработчик** `frontend/public/api/lead.php` (PHP 7.4+, same-origin) — попадает в `dist/api/`.
-  - Порядок: проверки → запись в CSV → ответ клиенту → Telegram.
-  - Если Telegram недоступен, заявка уже лежит в CSV.
+  - Порядок: проверки → запись в CSV → ответ клиенту → письмо на kirill.malin0vsky@yandex.ru → Telegram.
+  - Если почта или Telegram недоступны, заявка уже лежит в CSV.
+  - Письмо уходит через `mail()` хостинга от `noreply@bazaimporta.ru`; адреса меняются в `lead-config.php` (`MAIL_TO`, `MAIL_FROM`). Сбои — в `~/leads/mail-failed.log`.
 - **Шапка справа** — «Получить консультацию» (на телефоне «Консультация») → `#lead`. На `/privacy/` и `/soglasie/` ведёт на `/#lead`. Цель `lead_cta_header`.
 - **Видео вместо 3D.** Фоновый луп 60 с из ролика «Привезли Lamborghini из Кореи» (6:49–7:49, выбор владельца).
   - Кнопка «Смотреть ролик · 24 мин» на видео ведёт в бота Бориса: полное видео выдаёт он после /start.
@@ -51,6 +52,7 @@ chmod 600 ~/config/lead-config.php
 - Rate limit и ключи идемпотентности — `~/leads/state/`.
 
 Проверки после выкладки:
+- Письмо: тестовая заявка «ТЕСТ …» приходит на kirill.malin0vsky@yandex.ru с темой «[ТЕСТ] Заявка с сайта: …». Если её нет во «Входящих» — проверьте «Спам». Если и там нет — `mail()` на хостинге выключен, или для домена нужен ящик `noreply@bazaimporta.ru` (создаётся в панели reg.ru → Почта).
 - `curl -s https://bazaimporta.ru/api/lead.php` → `{"ok":false,"error":"method"}` (405), больше ничего не раскрывается.
 - Тестовая заявка с именем «ТЕСТ …» приходит в Telegram с пометкой 🧪 ТЕСТ, а в CSV в колонке `test` стоит 1.
 
@@ -114,7 +116,7 @@ chmod 600 ~/config/lead-config.php
 - `blob:` в `frame-src` / `child-src` и `worker-src 'self' blob:` оставлены: они нужны Вебвизору Метрики, не 3D.
 
 ## Тесты
-- API: `PHP_BIN=… npm run test:api` в `frontend/` — 12 проверок.
+- API: `PHP_BIN=… npm run test:api` в `frontend/` — 13 проверок (в том числе письмо).
   - Валидация, нормализация телефонов СНГ, honeypot и тайминг.
   - Двойная отправка, rate limit, чужой Origin, сбой записи CSV, экранирование в Telegram.
 - Браузер: `PHP_BIN=… node audit/tools/leadform.mjs frontend/dist audit/leadform-video` — 38 проверок.

@@ -19,6 +19,10 @@ const RATE_WINDOW = 600;           // …за 10 минут
 const IDEMPOTENCY_TTL = 86400;     // повтор с тем же ключом сутки не создаёт новую заявку
 const MAX_BODY = 8192;
 const TELEGRAM_TIMEOUT = 6;        // секунд на весь запрос к Bot API
+// Письмо о каждой заявке. В ~/config/lead-config.php можно переопределить MAIL_TO / MAIL_FROM.
+// MAIL_FROM — адрес на домене сайта: письма «от» чужого домена Яндекс отправляет в спам.
+const MAIL_TO = 'kirill.malin0vsky@yandex.ru';
+const MAIL_FROM = 'noreply@bazaimporta.ru';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -145,6 +149,27 @@ function h(string $s): string
     return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+/** Письмо в UTF-8 через mail() хостинга (sendmail reg.ru). Тема и имя отправителя — в base64 (RFC 2047). */
+function send_mail(string $to, string $from, string $subject, string $body, $logFile = null): bool
+{
+    $enc = fn (string $s) => '=?UTF-8?B?' . base64_encode($s) . '?=';
+    $headers = [
+        'From: ' . $enc('BAZA Import — заявки') . " <$from>",
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        'X-Mailer: bazaimporta-lead',
+    ];
+    $payload = chunk_split(base64_encode($body));
+    if (is_string($logFile) && $logFile !== '') {
+        return @file_put_contents($logFile, json_encode(['to' => $to, 'subject' => $subject, 'body' => $body, 'headers' => $headers], JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX) !== false;
+    }
+    // -f — адрес возврата (envelope sender) на своём домене, иначе часть почтовиков режет письмо
+    $ok = @mail($to, $enc($subject), $payload, implode("\r\n", $headers), '-f' . $from);
+    if (!$ok) error_log('lead: mail() failed');
+    return $ok;
+}
+
 function telegram_send(string $base, string $token, string $chatId, string $html): bool
 {
     $url = rtrim($base, '/') . '/bot' . $token . '/sendMessage';
@@ -261,14 +286,38 @@ try {
     fail(500, 'server');
 }
 
-// Заявка сохранена — отвечаем сразу, Telegram досылаем после ответа
+// Заявка сохранена — отвечаем сразу, письмо и Telegram досылаем после ответа
 respond(200, ['ok' => true]);
 if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 
 $cfgFile = "$home/config/lead-config.php";
-$cfg = is_file($cfgFile) ? require $cfgFile : null;
-if (!is_array($cfg) || empty($cfg['BOT_TOKEN']) || empty($cfg['CHAT_ID'])) {
-    error_log("lead: no telegram config at $cfgFile — lead saved to CSV only");
+$cfg = is_file($cfgFile) ? require $cfgFile : [];
+if (!is_array($cfg)) $cfg = [];
+
+// ——— письмо ———
+$mailTo = (string) ($cfg['MAIL_TO'] ?? MAIL_TO);
+if ($mailTo !== '') {
+    $subject = ($isTest ? '[ТЕСТ] ' : '') . 'Заявка с сайта: ' . $name . ', ' . TRACKS[$track];
+    $body = implode("\n", array_filter([
+        'Новая заявка с сайта bazaimporta.ru',
+        '',
+        'Имя: ' . $name,
+        'Телефон: ' . $phone,
+        'Трек: ' . TRACKS[$track],
+        $car !== '' ? 'Ищет: ' . $car : null,
+        'Страница: ' . ($page !== '' ? $page : '—'),
+        array_filter($utm) ? 'Метки: ' . implode(', ', array_map(fn ($k, $v) => "$k=$v", array_keys(array_filter($utm)), array_filter($utm))) : null,
+        'Время: ' . $now->format('d.m.Y H:i') . ' МСК',
+    ], fn ($l) => $l !== null));
+    // MAIL_LOG — только для локальных тестов: письмо пишется в файл вместо отправки
+    if (!send_mail($mailTo, (string) ($cfg['MAIL_FROM'] ?? MAIL_FROM), $subject, $body, $cfg['MAIL_LOG'] ?? null)) {
+        @file_put_contents("$leadsDir/mail-failed.log", $row['time_msk'] . ';' . $key . "\n", FILE_APPEND | LOCK_EX);
+    }
+}
+
+// ——— Telegram ———
+if (empty($cfg['BOT_TOKEN']) || empty($cfg['CHAT_ID'])) {
+    error_log("lead: no telegram config at $cfgFile — Telegram skipped");
     exit;
 }
 
