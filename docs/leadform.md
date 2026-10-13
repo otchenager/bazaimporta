@@ -5,7 +5,9 @@
   - Где стоит: на главной, «С нуля» и «Есть опыт» — перед FAQ; на «Для себя» — сразу под hero.
   - Вторичная кнопка «Получить консультацию» в hero ведёт к форме. Основная CTA «Вступить в базу» не тронута.
 - **Обработчик** `frontend/public/api/lead.php` (PHP 7.4+, same-origin) — попадает в `dist/api/`.
-  - Порядок: проверки → запись в CSV → ответ клиенту → письмо на kirill.malin0vsky@yandex.ru → Telegram.
+  - Порядок: проверки → запись в CSV → ответ клиенту → письмо на kirill.malin0vsky@yandex.ru → уведомление в Telegram.
+  - **Заявки смотрят в кабинете** `https://bazaimporta.ru/manager/` (`public/manager/index.php`, вход по паролю): список, поиск, статусы и заметки (`~/leads/status.json`), выгрузка CSV, удаление по отзыву согласия с журналом `~/leads/deletions.log`.
+  - В Telegram (`CHAT_ID` — личка @visagevvvv) приходит **только уведомление**: «новая заявка», трек, время и ссылка на кабинет. Имя и телефон в Telegram не уходят — так нет трансграничной передачи ПДн.
   - Если почта или Telegram недоступны, заявка уже лежит в CSV.
   - Письмо уходит через `mail()` хостинга от `noreply@bazaimporta.ru`; адреса меняются в `lead-config.php` (`MAIL_TO`, `MAIL_FROM`). Сбои — в `~/leads/mail-failed.log`.
 - **Шапка справа** — «Получить консультацию» (на телефоне «Консультация») → `#lead`. На `/privacy/` и `/soglasie/` ведёт на `/#lead`. Цель `lead_cta_header`.
@@ -34,14 +36,14 @@
    - Проверка: `node scripts/check-copy.mjs --release` падает, пока остаётся хоть один плейсхолдер.
 2. **Роскомнадзор (проверить с юристом):**
    - оператор ПДн подаёт уведомление об обработке ПДн;
-   - уведомления о заявках уходят в Telegram, серверы которого могут быть за рубежом. Это может считаться трансграничной передачей, о ней тоже уведомляют РКН.
+   - в Telegram персональные данные не уходят (только уведомление о факте заявки), поэтому трансграничной передачи нет.
 
 ## Настройка сервера (reg.ru, один раз)
 PHP должен исполняться в веб-корне. Проверка: `php -v` по SSH. Отсюда порт 22 сервера недоступен, поэтому проверку нужно сделать вручную.
 
 ```bash
 mkdir -p ~/config ~/leads && chmod 700 ~/config ~/leads
-nano ~/config/lead-config.php      # шаблон: deploy/lead-config.example.php (BOT_TOKEN, CHAT_ID)
+nano ~/config/lead-config.php      # шаблон: deploy/lead-config.example.php (ADMIN_PASSWORD_HASH, BOT_TOKEN, CHAT_ID)
 chmod 600 ~/config/lead-config.php
 ```
 

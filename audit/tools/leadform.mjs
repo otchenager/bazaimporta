@@ -168,7 +168,7 @@ const noCV = (page) => page.addStyleTag({ content: 'main > section { content-vis
 }
 
 // ——— 5. 360 px без горизонтального скролла, скриншоты всех страниц ———
-for (const url of ['/', '/s-nulya/', '/est-opyt/', '/dlya-sebya/', '/privacy/', '/soglasie/']) {
+for (const url of ['/', '/s-nulya/', '/est-opyt/', '/dlya-sebya/', '/privacy/', '/consent/', '/cookies/', '/oferta/']) {
   const { ctx, page } = await open(url, { width: 360 })
   await noCV(page)
   const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)

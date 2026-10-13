@@ -36,7 +36,7 @@ bash ~/regru.sh deploy
    - что ссылки на канал и бота на месте и что отдаётся CSP.
 
 ## Лид-форма (один раз, до первой выкладки ветки `leadform-video`)
-`~/config/lead-config.php` с BOT_TOKEN и CHAT_ID (шаблон — `deploy/lead-config.example.php`), папка `~/leads`.
+`~/config/lead-config.php` с ADMIN_PASSWORD_HASH, BOT_TOKEN и CHAT_ID (шаблон — `deploy/lead-config.example.php`), папка `~/leads`.
 Подробно — `docs/leadform.md`. Выкладка ветки: `BRANCH=leadform-video bash ~/regru.sh deploy`.
 
 ## Один раз в панели reg.ru
