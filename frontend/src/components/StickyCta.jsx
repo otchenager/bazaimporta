@@ -35,7 +35,7 @@ export default function StickyCta({ track }) {
 
   return (
     <div
-      className="sticky-cta fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/90 px-4 pt-3 backdrop-blur-md md:hidden"
+      className="sticky-cta fixed inset-x-0 z-40 border-t border-line bg-bg/90 px-4 pt-3 backdrop-blur-md md:hidden"
       data-hidden={hidden}
       aria-hidden={hidden}
     >

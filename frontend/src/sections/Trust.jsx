@@ -75,7 +75,7 @@ export default function Trust() {
               <li className="rounded-full border border-line px-3 py-1.5 text-muted">{LEGAL.entityShort}</li>
               <li className="rounded-full border border-line px-3 py-1.5 text-muted">ИНН {LEGAL.inn}</li>
               <li>
-                <a href={LINKS.offer} target="_blank" rel="noopener" className="inline-block rounded-full border border-line px-3 py-1.5 text-text underline-offset-4 hover:border-text hover:underline">
+                <a href={LINKS.offer} className="inline-block rounded-full border border-line px-3 py-1.5 text-text underline-offset-4 hover:border-text hover:underline">
                   Публичная оферта
                 </a>
               </li>

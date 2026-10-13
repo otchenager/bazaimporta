@@ -1,6 +1,6 @@
 import { COPY, LEGAL, LINKS } from '../content/copy.js'
 import { TRACKS, trackBySlug } from '../content/tracks.js'
-import { PRIVACY, CONSENT } from '../content/privacy.js'
+import { DOCUMENTS } from '../legal/documents.js'
 import HERO_MEDIA from '../visual/hero-media.json'
 
 export const SITE_URL = 'https://bazaimporta.ru'
@@ -20,7 +20,7 @@ function jsonLd(obj) {
 export function metaFor(pathname) {
   const track = trackBySlug(pathname)
   if (pathname === '/thank-you/') return { title: 'Спасибо за оплату — BAZA Import', description: HOME.description, noindex: true, path: pathname }
-  for (const doc of [PRIVACY, CONSENT]) {
+  for (const doc of DOCUMENTS) {
     if (pathname === doc.path) return { title: `${doc.title} — BAZA Import`, description: `${doc.title} на сайте bazaimporta.ru.`, noindex: true, path: pathname }
   }
   if (pathname === '/404') return { title: 'Страница не найдена — BAZA Import', description: HOME.description, noindex: true, path: '/' }
@@ -65,6 +65,7 @@ export function headHtml(pathname) {
         sameAs: [LINKS.channel],
         legalName: LEGAL.entityName,
         taxID: LEGAL.inn,
+        identifier: { '@type': 'PropertyValue', propertyID: 'ОГРНИП', value: LEGAL.ogrnip },
         email: LEGAL.email,
         telephone: LEGAL.phoneE164,
       }),
@@ -83,4 +84,7 @@ export function headHtml(pathname) {
   return tags.join('\n    ')
 }
 
-export const PRERENDER_ROUTES = ['/', ...TRACKS.map((t) => t.slug), '/thank-you/', PRIVACY.path, CONSENT.path]
+/** Служебные и юридические страницы: noindex, в sitemap не идут. */
+export const NOINDEX_ROUTES = ['/thank-you/', ...DOCUMENTS.map((d) => d.path)]
+
+export const PRERENDER_ROUTES = ['/', ...TRACKS.map((t) => t.slug), '/thank-you/', ...DOCUMENTS.map((d) => d.path)]

@@ -18,3 +18,6 @@ backend/logs/*.log
 
 # Lighthouse HTML-отчёты тяжёлые — в репозиторий только сводки json
 audit/**/lighthouse-*.html
+
+# Локальный статус проекта — ведётся после каждой сессии, в git не идёт
+STATUS.md

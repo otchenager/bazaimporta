@@ -1,12 +1,16 @@
 <?php
-// Заявка с лид-формы (src/components/LeadForm.jsx) → CSV-лог + уведомление в Telegram.
+// Заявка с лид-формы (src/components/LeadForm.jsx) → CSV-лог (его показывает кабинет /manager/) + письмо
+// + уведомление в Telegram без персональных данных («новая заявка» и ссылка на кабинет).
+// IP пишется только в CSV (доказательство согласия), в письмо не уходит.
 // Секреты и данные — вне веб-корня, в домашней папке:
-//   ~/config/lead-config.php  — BOT_TOKEN и CHAT_ID (шаблон: deploy/lead-config.example.php)
+//   ~/config/lead-config.php  — BOT_TOKEN, CHAT_ID, ADMIN_PASSWORD_HASH (шаблон: deploy/lead-config.example.php)
 //   ~/leads/leads.csv         — каждая заявка, даже если Telegram недоступен
 //   ~/leads/state/            — счётчики rate limit и ключи идемпотентности
 // Порядок: проверки → запись в CSV → ответ клиенту → Telegram (после ответа, если PHP-FPM это умеет).
 // PHP 7.4+. Наружу уходит только {ok:true} или {ok:false, error:<код>}; подробности — в error_log сервера.
 declare(strict_types=1);
+
+require __DIR__ . '/_common.php';
 
 // предупреждения PHP — только в error_log, никогда в ответ клиенту
 ini_set('display_errors', '0');
@@ -23,6 +27,8 @@ const TELEGRAM_TIMEOUT = 6;        // секунд на весь запрос к
 // MAIL_FROM — адрес на домене сайта: письма «от» чужого домена Яндекс отправляет в спам.
 const MAIL_TO = 'kirill.malin0vsky@yandex.ru';
 const MAIL_FROM = 'noreply@bazaimporta.ru';
+// Кабинет заявок (manager/index.php) — ссылка в уведомлении Telegram. Переопределяется MANAGER_URL в конфиге.
+const MANAGER_URL = 'https://bazaimporta.ru/manager/';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -40,22 +46,6 @@ function fail(int $status, string $code): void
     exit;
 }
 
-/** Домашняя папка аккаунта: под PHP-FPM переменной HOME может не быть. */
-function home_dir(): string
-{
-    if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
-        $pw = posix_getpwuid(posix_geteuid());
-        if (!empty($pw['dir'])) return rtrim($pw['dir'], '/');
-    }
-    foreach ([getenv('HOME'), $_SERVER['HOME'] ?? null] as $h) {
-        if (is_string($h) && $h !== '') return rtrim($h, '/');
-    }
-    // reg.ru: /var/www/<user>/data/www/<домен>/api → /var/www/<user>/data
-    $p = realpath(__DIR__) ?: __DIR__;
-    $i = strpos($p, '/www/');
-    if ($i !== false) return substr($p, 0, $i);
-    throw new RuntimeException('home dir not found');
-}
 
 function clean($v, int $max): string
 {
@@ -79,26 +69,6 @@ function normalize_phone(string $raw): ?string
     return null;
 }
 
-/** Окно rate limit по IP: файл с метками времени, под flock. true — лимит не превышен. */
-function rate_ok(string $dir, string $ip): bool
-{
-    $f = @fopen("$dir/rl-" . hash('sha256', $ip) . '.txt', 'c+');
-    if (!$f) return true; // не смогли посчитать — не блокируем живого человека
-    try {
-        if (!flock($f, LOCK_EX)) return true;
-        $now = time();
-        $hits = array_filter(array_map('intval', explode(',', stream_get_contents($f) ?: '')), fn ($t) => $t > $now - RATE_WINDOW);
-        if (count($hits) >= RATE_LIMIT) return false;
-        $hits[] = $now;
-        ftruncate($f, 0);
-        rewind($f);
-        fwrite($f, implode(',', $hits));
-        return true;
-    } finally {
-        flock($f, LOCK_UN);
-        fclose($f);
-    }
-}
 
 /** Ключ идемпотентности уже встречался (и ещё не протух)? Иначе — запомнить. */
 function seen_before(string $dir, string $key): bool
@@ -124,6 +94,16 @@ function gc_state(string $dir): void
 
 function csv_append(string $file, array $row): bool
 {
+    // набор колонок изменился (например, добавились поля согласия) — старый файл откладываем, новый начинаем с заголовка
+    if (is_file($file)) {
+        $h = @fopen($file, 'r');
+        $first = $h ? (string) fgets($h) : '';
+        if ($h) fclose($h);
+        $first = trim(substr($first, 0, 3) === "\xEF\xBB\xBF" ? substr($first, 3) : $first);
+        if ($first !== '' && str_getcsv($first, ';') !== array_keys($row)) {
+            @rename($file, preg_replace('/\.csv$/', '', $file) . '.until-' . date('Ymd-His') . '.csv');
+        }
+    }
     $new = !is_file($file);
     $f = @fopen($file, 'a');
     if (!$f) return false;
@@ -144,10 +124,6 @@ function csv_append(string $file, array $row): bool
     }
 }
 
-function h(string $s): string
-{
-    return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-}
 
 /** Письмо в UTF-8 через mail() хостинга (sendmail reg.ru). Тема и имя отправителя — в base64 (RFC 2047). */
 function send_mail(string $to, string $from, string $subject, string $body, $logFile = null): bool
@@ -230,6 +206,11 @@ $car = $track === 'personal' ? clean($in['car'] ?? '', 120) : '';
 $page = clean($in['page'] ?? '', 200);
 $key = clean($in['key'] ?? '', 64);
 $consent = ($in['consent'] ?? false) === true;
+// версии текстов согласий (src/legal/requisites.js → VERSIONS): доказательство, с какой редакцией согласился человек
+$version = fn ($v) => is_string($v) && preg_match('/^[\w.-]{1,20}$/', $v) ? $v : '';
+$consentVersion = $version($in['consent_version'] ?? null);
+$ads = ($in['ads'] ?? false) === true;
+$adsVersion = $ads ? $version($in['ads_version'] ?? null) : '';
 $utm = [];
 $utmIn = is_array($in['utm'] ?? null) ? $in['utm'] : [];
 foreach (['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid'] as $k) {
@@ -251,7 +232,7 @@ try {
     if (!is_dir($stateDir) && !mkdir($stateDir, 0700, true) && !is_dir($stateDir)) throw new RuntimeException("mkdir $stateDir");
 
     $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    if (!rate_ok($stateDir, $ip)) fail(429, 'rate_limited');
+    if (!rate_ok($stateDir, $ip, RATE_LIMIT, RATE_WINDOW)) fail(429, 'rate_limited');
     if ($spam) {
         error_log('lead: spam rejected (honeypot/timing) from ' . $ip);
         respond(200, ['ok' => true]);
@@ -274,7 +255,16 @@ try {
         'track' => TRACKS[$track],
         'car' => $car,
         'page' => $page,
-    ] + $utm + ['key' => $key, 'test' => $isTest ? '1' : ''];
+    ] + $utm + [
+        // факт согласия (ч. 3 ст. 9 152-ФЗ): чекбокс ПДн, версия текста, IP; согласие на рекламу (ст. 18 38-ФЗ) — отдельно
+        'consent_pd' => '1',
+        'consent_version' => $consentVersion,
+        'consent_ip' => $ip,
+        'ads_consent' => $ads ? '1' : '0',
+        'ads_version' => $adsVersion,
+        'key' => $key,
+        'test' => $isTest ? '1' : '',
+    ];
 
     if (!csv_append("$leadsDir/leads.csv", $row)) {
         // заявка не сохранена — ключ освобождаем, чтобы повтор с клиента её всё-таки записал
@@ -290,9 +280,7 @@ try {
 respond(200, ['ok' => true]);
 if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 
-$cfgFile = "$home/config/lead-config.php";
-$cfg = is_file($cfgFile) ? require $cfgFile : [];
-if (!is_array($cfg)) $cfg = [];
+$cfg = lead_config($home);
 
 // ——— письмо ———
 $mailTo = (string) ($cfg['MAIL_TO'] ?? MAIL_TO);
@@ -306,6 +294,7 @@ if ($mailTo !== '') {
         'Трек: ' . TRACKS[$track],
         $car !== '' ? 'Ищет: ' . $car : null,
         'Страница: ' . ($page !== '' ? $page : '—'),
+        'Согласие на рекламу: ' . ($ads ? 'да' : 'нет'),
         array_filter($utm) ? 'Метки: ' . implode(', ', array_map(fn ($k, $v) => "$k=$v", array_keys(array_filter($utm)), array_filter($utm))) : null,
         'Время: ' . $now->format('d.m.Y H:i') . ' МСК',
     ], fn ($l) => $l !== null));
@@ -317,22 +306,20 @@ if ($mailTo !== '') {
 
 // ——— Telegram ———
 if (empty($cfg['BOT_TOKEN']) || empty($cfg['CHAT_ID'])) {
-    error_log("lead: no telegram config at $cfgFile — Telegram skipped");
+    error_log('lead: no telegram config in ~/config/lead-config.php — Telegram skipped');
     exit;
 }
 
-$utmLine = implode(' · ', array_map(fn ($k, $v) => h("$k=$v"), array_keys(array_filter($utm)), array_filter($utm)));
+// Только уведомление: ни имени, ни телефона, ни меток — серверы Telegram за рубежом, а персональные данные
+// за границу не передаём (152-ФЗ, ст. 12). Сама заявка — в кабинете /manager/ (данные лежат на reg.ru, РФ).
+$managerUrl = (string) ($cfg['MANAGER_URL'] ?? MANAGER_URL);
 $lines = [
-    ($isTest ? '🧪 <b>ТЕСТ</b> · ' : '') . '<b>Новая заявка с сайта</b>',
-    '',
-    '👤 ' . h($name),
-    '📞 <a href="tel:' . h($phone) . '">' . h($phone) . '</a>',
+    ($isTest ? '🧪 <b>ТЕСТ</b> · ' : '') . '🔔 <b>Новая заявка на сайте</b>',
     '🛣 Трек: ' . h(TRACKS[$track]),
+    '🕒 ' . $now->format('d.m.Y H:i') . ' МСК',
+    '',
+    '<a href="' . h($managerUrl) . '">Открыть заявки</a>',
 ];
-if ($car !== '') $lines[] = '🚗 Ищет: ' . h($car);
-$lines[] = '📄 Страница: ' . h($page !== '' ? $page : '—');
-if ($utmLine !== '') $lines[] = '🏷 ' . $utmLine;
-$lines[] = '🕒 ' . $now->format('d.m.Y H:i') . ' МСК';
 
 // API_BASE — только для локальных тестов с заглушкой Bot API
 if (!telegram_send((string) ($cfg['API_BASE'] ?? 'https://api.telegram.org'), (string) $cfg['BOT_TOKEN'], (string) $cfg['CHAT_ID'], implode("\n", $lines))) {

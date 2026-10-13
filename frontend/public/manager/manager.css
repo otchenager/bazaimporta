@@ -1,0 +1,49 @@
+/* Кабинет заявок (index.php). Цвета — как на сайте. */
+:root { --bg: #0b0b0c; --surface: #151517; --line: #2a2a2e; --text: #f2f2f2; --muted: #a3a3aa; --accent: #ff6a00; --ink: #111; --ok: #3ccf7a; --err: #ff5a5a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+h1 { margin: 0; font-size: 1.5rem; }
+code { background: var(--surface); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+.wrap { max-width: 64rem; margin: 0 auto; padding: 1rem; }
+.narrow { max-width: 36rem; }
+.row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.top { border-bottom: 1px solid var(--line); position: sticky; top: 0; background: rgb(11 11 12 / .95); z-index: 1; }
+.top .wrap { padding-block: .6rem; }
+.login { max-width: 22rem; margin: 15vh auto; padding: 1rem; }
+.login h1 { margin-bottom: 1.25rem; }
+.stack { display: grid; gap: .6rem; }
+input, select, button, .btn { max-width: 100%; min-width: 0; font: inherit; min-height: 2.75rem; border-radius: .5rem; border: 1px solid var(--line); background: var(--surface); color: var(--text); padding: 0 .75rem; }
+input:focus-visible, select:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button, .btn { background: var(--accent); color: var(--ink); border-color: var(--accent); font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+button.ghost, .btn.ghost { background: transparent; color: var(--text); border-color: var(--line); }
+button.danger { background: var(--err); border-color: var(--err); }
+.check { display: flex; align-items: center; gap: .5rem; min-height: 2.75rem; color: var(--muted); }
+.check input { min-height: 0; width: 1.1rem; height: 1.1rem; }
+.flash { padding: .7rem .9rem; border-radius: .5rem; border: 1px solid; }
+.flash.ok { border-color: rgb(60 207 122 / .4); background: rgb(60 207 122 / .1); }
+.flash.err { border-color: rgb(255 90 90 / .4); background: rgb(255 90 90 / .1); }
+.note { color: var(--muted); }
+.filters { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: .5rem 0 1rem; }
+.filters input[type=search] { flex: 1 1 14rem; }
+.chips { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+.chip { padding: .35rem .75rem; border: 1px solid var(--line); border-radius: 999px; color: var(--text); text-decoration: none; }
+.chip span { color: var(--muted); }
+.chip.on { border-color: var(--accent); }
+.card { border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: .6rem; background: var(--surface); padding: .9rem 1rem; margin-bottom: .75rem; }
+.card.st-work { border-left-color: #f5c400; }
+.card.st-done { border-left-color: var(--ok); opacity: .8; }
+.card.st-spam { border-left-color: var(--line); opacity: .6; }
+.who { margin: 0; font-size: 1.05rem; overflow-wrap: anywhere; }
+.meta { margin: .2rem 0 0; color: var(--muted); font-size: .875rem; overflow-wrap: anywhere; }
+.tag { color: #f5c400; font-weight: 600; }
+.details { margin: .6rem 0; padding-left: 1.1rem; color: var(--muted); font-size: .9rem; overflow-wrap: anywhere; }
+details summary { cursor: pointer; color: var(--muted); font-size: .875rem; }
+.status { display: grid; grid-template-columns: auto 1fr auto; gap: .5rem; margin-top: .75rem; }
+.del { margin: .5rem 0 0; font-size: .85rem; }
+.del a { color: var(--muted); }
+.empty { color: var(--muted); padding: 2rem 0; text-align: center; }
+@media (max-width: 560px) {
+  .status { grid-template-columns: 1fr; }
+  .filters > * { flex: 1 1 100%; }
+}

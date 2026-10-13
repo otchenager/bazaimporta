@@ -17,7 +17,11 @@ ErrorDocument 403 /404.html
   RewriteRule ^(.*)$ https://bazaimporta.ru/$1 [R=301,L]
 
   # Старые адреса без завершающего слеша → страница трека
-  RewriteRule ^(s-nulya|est-opyt|dlya-sebya|thank-you|privacy|soglasie)$ /$1/ [R=301,L]
+  RewriteRule ^(s-nulya|est-opyt|dlya-sebya|thank-you|privacy|consent|cookies|oferta|ads-consent|terms|rekvizity)$ /$1/ [R=301,L]
+
+  # Согласие на обработку ПДн переехало: /soglasie/ → /consent/. Старая оферта docx → страница оферты
+  RewriteRule ^soglasie/?$ /consent/ [R=301,L]
+  RewriteRule ^oferta\.docx$ /oferta/ [R=301,L]
 
   # Трек «Профи» переименован в «Есть опыт»: старый адрес → новый
   RewriteRule ^profi/?$ /est-opyt/ [R=301,L]
@@ -26,6 +30,8 @@ ErrorDocument 403 /404.html
   RewriteRule (^|/)\.(?!well-known/) - [F,L]
   RewriteRule \.(map|md|log|sql|bak|zip|tar|gz|sh|env|ini|lock|json)$ - [F,L,NC]
   RewriteRule ^(src|scripts|node_modules|backend|tgbot|audit|docs|brand)(/|$) - [F,L,NC]
+  # общий PHP-код (api/_common.php) напрямую не открывается
+  RewriteRule (^|/)_[^/]*\.php$ - [F,L]
 </IfModule>
 
 <IfModule mod_headers.c>

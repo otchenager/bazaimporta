@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)))
 const dist = path.join(root, 'dist')
 const ssrEntry = path.join(root, 'dist-ssr', 'entry-server.js')
-const { render, PRERENDER_ROUTES } = await import(pathToFileURL(ssrEntry).href)
+const { render, PRERENDER_ROUTES, NOINDEX_ROUTES } = await import(pathToFileURL(ssrEntry).href)
 
 const SITE = 'https://bazaimporta.ru'
 // CSS (≈8 КБ gzip) встраиваем в страницу: минус один блокирующий запрос до первой отрисовки
@@ -26,7 +26,7 @@ if (!entry) throw new Error('не найден <script type=module> в шабл�
 const loader = `<script>addEventListener('load',function(){setTimeout(function(){var s=document.createElement('script');s.type='module';s.src='${entry[1]}';document.head.appendChild(s)},1200)})</script>`
 const templateLowJs = template.replace(entry[0], loader)
 
-// Яндекс Метрика: <script src="/metrika.js"> и <noscript> уже в index.html (public/metrika.js)
+// Яндекс Метрика: <script src="/metrika.js"> в index.html; стартует только после согласия на cookie (public/metrika.js)
 
 // Предзагрузка шрифтов первого экрана: Oswald 700 (H1) и Manrope 400 (текст), кириллица
 const assetFiles = fs.readdirSync(path.join(dist, 'assets'))
@@ -55,7 +55,7 @@ page('/404', path.join(dist, '404.html'))
 console.log('prerendered 404.html')
 
 // служебные и юридические страницы — noindex, в sitemap не идут
-const indexable = PRERENDER_ROUTES.filter((r) => !['/thank-you/', '/privacy/', '/soglasie/'].includes(r))
+const indexable = PRERENDER_ROUTES.filter((r) => !NOINDEX_ROUTES.includes(r))
 const today = new Date().toISOString().slice(0, 10)
 fs.writeFileSync(
   path.join(dist, 'sitemap.xml'),

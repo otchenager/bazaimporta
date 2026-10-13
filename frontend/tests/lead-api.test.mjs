@@ -2,7 +2,7 @@
 //   PHP_BIN=путь/к/php node --test tests/lead-api.test.mjs
 import { test, before, after, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -30,7 +30,7 @@ before(async () => {
   fs.mkdirSync(path.join(home, 'config'))
   fs.writeFileSync(
     path.join(home, 'config/lead-config.php'),
-    `<?php return ['BOT_TOKEN' => 'TEST:TOKEN', 'CHAT_ID' => '42', 'API_BASE' => 'http://127.0.0.1:${tg.address().port}', 'MAIL_LOG' => ${JSON.stringify(path.join(home, 'mail.log'))}];`,
+    `<?php return ['ADMIN_PASSWORD_HASH' => '${spawnSync(PHP, ['-r', "echo password_hash('верный-пароль', PASSWORD_DEFAULT);"]).stdout.toString()}', 'BOT_TOKEN' => 'TEST:TOKEN', 'CHAT_ID' => '42', 'API_BASE' => 'http://127.0.0.1:${tg.address().port}', 'MAIL_LOG' => ${JSON.stringify(path.join(home, 'mail.log'))}];`,
   )
   php = spawn(PHP, ['-S', `127.0.0.1:${PORT}`, '-t', path.join(root, 'public')], { env: { ...process.env, HOME: home }, stdio: 'ignore' })
   for (let i = 0; i < 50; i++) {
@@ -94,7 +94,7 @@ test('не JSON → 415', async () => {
   assert.equal(r.status, 415)
 })
 
-test('валидная заявка → ok, CSV, Telegram с экранированием и кликабельным телефоном', async () => {
+test('валидная заявка → ok, CSV; в Telegram — только уведомление без персональных данных', async () => {
   const before = csv().length
   const r = await post(valid())
   assert.equal(r.status, 200)
@@ -105,9 +105,10 @@ test('валидная заявка → ok, CSV, Telegram с экраниров�
   const msg = sent.at(-1)
   assert.equal(msg.url, '/botTEST:TOKEN/sendMessage')
   assert.equal(msg.body.parse_mode, 'HTML')
-  assert.match(msg.body.text, /<a href="tel:\+79123456789">/)
-  assert.match(msg.body.text, /Hyundai Palisade &lt;b&gt;/)
-  assert.match(msg.body.text, /utm_source=yandex/)
+  for (const pd of ['79123456789', 'Иван', 'Hyundai', 'utm_source', 'yandex']) assert.ok(!msg.body.text.includes(pd), `в Telegram нет «${pd}»`)
+  assert.match(msg.body.text, /Новая заявка/)
+  assert.match(msg.body.text, /Трек: Для себя/)
+  assert.match(msg.body.text, /<a href="https:\/\/bazaimporta\.ru\/manager\/">/)
   assert.match(msg.body.text, /ТЕСТ/)
   assert.match(msg.body.text, /МСК/)
 })
@@ -210,4 +211,122 @@ test('письмо о заявке: на kirill.malin0vsky@yandex.ru, UTF-8, т�
   assert.match(mail.body, /Ищет: BMW X5/)
   assert.match(mail.body, /utm_source=yandex/)
   assert.ok(mail.headers.some((h) => h.startsWith('From: ') && h.endsWith('<noreply@bazaimporta.ru>')))
+})
+
+test('согласие в CSV: флаг ПДн, версия, IP и согласие на рекламу отдельно; IP не уходит в Telegram', async () => {
+  const header = () => fs.readFileSync(path.join(home, 'leads/leads.csv'), 'utf8').replace(/^﻿/, '').split('\n')[0].trim().split(';')
+  const row = () => Object.fromEntries(header().map((k, i) => [k, csv().at(-1).split(';')[i]]))
+  const s = sent.length
+
+  await post(valid({ consent_version: '2026-10-12', ads: true, ads_version: '2026-10-12' }))
+  let r = row()
+  assert.equal(r.consent_pd, '1')
+  assert.equal(r.consent_version, '2026-10-12')
+  assert.equal(r.consent_ip, '127.0.0.1')
+  assert.equal(r.ads_consent, '1')
+  assert.equal(r.ads_version, '2026-10-12')
+
+  await post(valid({ consent_version: '<script>', ads: 'yes' }))
+  r = row()
+  assert.equal(r.consent_version, '', 'мусор вместо версии не пишется')
+  assert.equal(r.ads_consent, '0', 'реклама — только при true')
+
+  await waitSent(s + 2)
+  assert.ok(sent.slice(s).every((m) => !m.body.text.includes('127.0.0.1')))
+})
+
+test('старый CSV с другим набором колонок откладывается, новый начинается с заголовка', async () => {
+  const leads = path.join(home, 'leads')
+  fs.writeFileSync(path.join(leads, 'leads.csv'), '﻿time_msk;name;phone\n2026-01-01;Старый;+79000000000\n')
+  const r = await post(valid())
+  assert.equal(r.status, 200)
+  const old = fs.readdirSync(leads).filter((f) => /^leads\.until-.*\.csv$/.test(f))
+  assert.equal(old.length, 1)
+  assert.match(fs.readFileSync(path.join(leads, old[0]), 'utf8'), /Старый/)
+  assert.equal(csv().length, 1)
+  assert.match(fs.readFileSync(path.join(leads, 'leads.csv'), 'utf8'), /consent_pd;consent_version;consent_ip;ads_consent;ads_version;key;test/)
+})
+
+// ——— кабинет заявок /manager/ ———
+const jar = { c: '' }
+async function mgr(pathQ = '', { form, cookie = jar.c } = {}) {
+  const r = await fetch(BASE + '/manager/' + pathQ, {
+    method: form ? 'POST' : 'GET',
+    redirect: 'manual',
+    headers: { ...(cookie ? { Cookie: cookie } : {}), ...(form ? { 'Content-Type': 'application/x-www-form-urlencoded' } : {}) },
+    body: form ? new URLSearchParams(form) : undefined,
+  })
+  const set = r.headers.get('set-cookie')
+  if (set && cookie === jar.c) jar.c = set.split(';')[0]
+  return { r, html: await r.text() }
+}
+const csrfOf = (html) => html.match(/name="csrf" value="([0-9a-f]+)"/)?.[1]
+
+test('кабинет: без входа — только форма пароля, заявок не видно', async () => {
+  const { r, html } = await mgr()
+  assert.equal(r.status, 200)
+  assert.match(r.headers.get('x-robots-tag'), /noindex/)
+  assert.match(html, /name="password"/)
+  assert.ok(!html.includes('+79123456789'))
+  const ex = await mgr('?export=1')
+  assert.ok(!ex.html.includes('+79123456789'), 'выгрузка без входа не отдаёт данные')
+})
+
+test('кабинет: неверный пароль отклоняется, 6-я попытка за 15 минут — блок', async () => {
+  const msgs = []
+  for (let i = 0; i < 6; i++) msgs.push((await mgr('', { form: { action: 'login', password: 'нет' }, cookie: 'x=1' })).html)
+  assert.ok(msgs.slice(0, 5).every((h) => h.includes('Неверный пароль')))
+  assert.match(msgs[5], /Слишком много попыток/)
+})
+
+test('кабинет: вход, список, статус с CSRF, поиск, выгрузка, удаление с журналом', async () => {
+  await post(valid({ name: 'Кабинетный Клиент', phone: '+7 (999) 111-22-33', car: '<img src=x>' }))
+  const login = await mgr('', { form: { action: 'login', password: 'верный-пароль' } })
+  assert.equal(login.r.status, 303)
+  assert.match(jar.c, /^baza_mgr=/)
+
+  let { html } = await mgr()
+  assert.match(html, /Кабинетный Клиент/)
+  assert.match(html, /&lt;img src=x&gt;/, 'ввод экранирован')
+  assert.match(html, /редакция/, 'видно доказательство согласия')
+  const csrf = csrfOf(html)
+  assert.ok(csrf)
+  const key = csv().at(-1).split(';').at(-2)
+
+  const noCsrf = await mgr('', { form: { action: 'status', key, status: 'work', note: 'x' } })
+  assert.equal(noCsrf.r.status, 403)
+
+  await mgr('', { form: { action: 'status', key, status: 'work', note: 'перезвонить в 18:00', csrf } })
+  ;({ html } = await mgr('?status=work'))
+  assert.match(html, /Кабинетный Клиент/)
+  assert.match(html, /перезвонить в 18:00/)
+  ;({ html } = await mgr('?q=111-22'))
+  assert.match(html, /Кабинетный Клиент/)
+  assert.ok(!html.includes('Пётр Тестов'))
+
+  const ex = await fetch(BASE + '/manager/?export=1&q=Кабинетный', { headers: { Cookie: jar.c } })
+  assert.match(ex.headers.get('content-type'), /text\/csv/)
+  const body = await ex.text()
+  assert.match(body, /\+79991112233/)
+  assert.match(body, /"В работе";"перезвонить в 18:00"/)
+
+  const before = csv().length
+  const bad = await mgr('', { form: { action: 'delete', key, reason: 'withdrawn', csrf } })
+  assert.equal(bad.r.status, 303, 'без подтверждения — назад на форму')
+  assert.equal(csv().length, before)
+  await mgr('', { form: { action: 'delete', key, reason: 'withdrawn', confirm: '1', csrf } })
+  assert.equal(csv().length, before - 1)
+  assert.ok(!csv().some((l) => l.includes('+79991112233')))
+  const log = fs.readFileSync(path.join(home, 'leads/deletions.log'), 'utf8')
+  assert.match(log, new RegExp(`;${key};withdrawn;rows=1`))
+  assert.ok(!log.includes('Кабинетный') && !log.includes('79991112233'), 'в журнале нет ПДн')
+
+  await mgr('', { form: { action: 'logout', csrf } })
+  ;({ html } = await mgr())
+  assert.match(html, /name="password"/)
+})
+
+test('общий PHP-код напрямую не открывается', async () => {
+  const r = await fetch(BASE + '/api/_common.php')
+  assert.equal(r.status, 404)
 })

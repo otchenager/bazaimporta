@@ -4,6 +4,8 @@ import Reveal from './Reveal.jsx'
 import CtaButton from './CtaButton.jsx'
 import { COPY, LEGAL, LINKS } from '../content/copy.js'
 import { TRACKS } from '../content/tracks.js'
+import { PATHS } from '../legal/documents.js'
+import { VERSIONS } from '../legal/requisites.js'
 import { track as reachGoal } from '../lib/analytics.js'
 import { readUtm } from '../lib/utm.js'
 import { COUNTRIES, countryById, formatPhone, phoneComplete, phoneDigits, phoneE164 } from '../lib/phone.js'
@@ -44,7 +46,7 @@ const FIELDS = Object.keys(VALIDATE)
  * Цели Метрики: lead_form_open (форма на экране), lead_form_start (первый ввод), lead_submit {track} — только при ok от сервера.
  */
 export default function LeadForm({ track }) {
-  const [v, setV] = useState({ name: '', country: 'ru', phone: '', track: track?.id ?? '', car: '', consent: false, website: '' })
+  const [v, setV] = useState({ name: '', country: 'ru', phone: '', track: track?.id ?? '', car: '', consent: false, ads: false, website: '' })
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle') // idle | sending | done
   const [formError, setFormError] = useState('')
@@ -70,6 +72,7 @@ export default function LeadForm({ track }) {
         country: el.country?.value || s.country,
         car: el.car?.value ?? s.car,
         consent: el.consent?.checked ?? s.consent,
+        ads: el.ads?.checked ?? s.ads,
       }))
     }
     keyRef.current = sessionKey() ?? newKey()
@@ -147,6 +150,9 @@ export default function LeadForm({ track }) {
           track: v.track,
           car: v.track === 'personal' ? v.car.trim() : '',
           consent: v.consent,
+          consent_version: VERSIONS.pd,
+          ads: v.ads,
+          ads_version: VERSIONS.ads,
           website: v.website,
           elapsed: Math.round(performance.now()),
           key: keyRef.current,
@@ -216,14 +222,15 @@ export default function LeadForm({ track }) {
                 </CtaButton>
               </div>
             ) : (
-              <form ref={form} onSubmit={submit} noValidate className="grid gap-5" aria-describedby={formError ? 'lead-form-err' : undefined}>
+              // ym-hide-content / ym-disable-keys: Вебвизор не записывает содержимое и ввод в форме (политика cookie, раздел 3)
+              <form ref={form} onSubmit={submit} noValidate className="ym-hide-content grid gap-5" aria-describedby={formError ? 'lead-form-err' : undefined}>
                 <div>
                   <label htmlFor="lead-name" className="lead-label">{L.name}</label>
                   <input
                     id="lead-name"
                     name="name"
                     data-field="name"
-                    className="lead-input"
+                    className="lead-input ym-disable-keys"
                     autoComplete="name"
                     enterKeyHint="next"
                     maxLength={60}
@@ -241,7 +248,7 @@ export default function LeadForm({ track }) {
                     <select
                       name="country"
                       aria-label={L.country}
-                      className="lead-input lead-select !w-[6.75rem] shrink-0"
+                      className="lead-input lead-select ym-disable-keys !w-[6.75rem] shrink-0"
                       value={v.country}
                       onChange={(e) => {
                         const c = countryById(e.target.value)
@@ -261,7 +268,7 @@ export default function LeadForm({ track }) {
                       inputMode="tel"
                       autoComplete="tel-national"
                       enterKeyHint={v.track === 'personal' ? 'next' : 'send'}
-                      className="lead-input num-input min-w-0 flex-1"
+                      className="lead-input num-input ym-disable-keys min-w-0 flex-1"
                       placeholder={country.mask}
                       value={formatPhone(v.phone, country)}
                       onChange={(e) => set('phone', phoneDigits(e.target.value, country))}
@@ -282,7 +289,7 @@ export default function LeadForm({ track }) {
                           name="track"
                           value={t.id}
                           data-field={i === 0 ? 'track' : undefined}
-                          className="sr-only"
+                          className="sr-only ym-disable-keys"
                           checked={v.track === t.id}
                           onChange={() => set('track', t.id)}
                         />
@@ -301,7 +308,7 @@ export default function LeadForm({ track }) {
                     <input
                       id="lead-car"
                       name="car"
-                      className="lead-input"
+                      className="lead-input ym-disable-keys"
                       maxLength={120}
                       enterKeyHint="send"
                       placeholder="Например, Kia Sorento 2023"
@@ -323,20 +330,35 @@ export default function LeadForm({ track }) {
                       type="checkbox"
                       name="consent"
                       data-field="consent"
-                      className="lead-check"
+                      className="lead-check ym-disable-keys"
                       checked={v.consent}
                       onChange={(e) => set('consent', e.target.checked)}
                       {...aria('consent')}
                     />
                     <span>
                       {L.consent[0]}
-                      <a href="/soglasie/" target="_blank" rel="noopener" className="link">{L.consent[1]}</a>
+                      <a href={PATHS.privacy} target="_blank" rel="noopener" className="link">{L.consent[1]}</a>
                       {L.consent[2]}
-                      <a href="/privacy/" target="_blank" rel="noopener" className="link">{L.consent[3]}</a>
+                      <a href={PATHS.consent} target="_blank" rel="noopener" className="link">{L.consent[3]}</a>
                     </span>
                   </label>
                   {err('consent')}
                 </div>
+
+                {/* необязательный, не отмечен по умолчанию, на заявку не влияет (38-ФЗ, ст. 18) */}
+                <label className="flex min-h-11 cursor-pointer items-start gap-3 text-sm leading-relaxed text-muted">
+                  <input
+                    type="checkbox"
+                    name="ads"
+                    className="lead-check ym-disable-keys"
+                    checked={v.ads}
+                    onChange={(e) => set('ads', e.target.checked)}
+                  />
+                  <span>
+                    {L.ads[0]}
+                    <a href={PATHS.adsConsent} target="_blank" rel="noopener" className="link">{L.ads[1]}</a>
+                  </span>
+                </label>
 
                 {formError && (
                   <p id="lead-form-err" role="alert" className="rounded-lg border border-danger/40 bg-danger/10 px-4 py-3 text-sm">

@@ -2,6 +2,10 @@ import Logo from './Logo.jsx'
 import PhoneLink from './PhoneLink.jsx'
 import Icon from './Icon.jsx'
 import { COPY, LEGAL, LINKS } from '../content/copy.js'
+import { DOCUMENTS } from '../legal/documents.js'
+import { openCookieSettings } from '../lib/consent.js'
+
+const linkCls = 'underline underline-offset-4 hover:text-text'
 
 export default function Footer() {
   return (
@@ -17,23 +21,32 @@ export default function Footer() {
       </div>
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-8 md:grid-cols-[auto_1fr_auto] md:items-start">
         <Logo />
-        <div className="text-sm leading-relaxed text-muted">
+        <div className="min-w-0 text-sm leading-relaxed text-muted">
           <p className="mb-1 font-semibold text-text">{COPY.footer.official}</p>
-          <p>
-            {LEGAL.entityName} · ИНН {LEGAL.inn} · ОГРНИП {LEGAL.ogrnip}
+          {/* реквизиты исполнителя — src/legal/requisites.js */}
+          <p className="text-xs [overflow-wrap:anywhere]">
+            {LEGAL.entityName} · ИНН {LEGAL.inn} · ОГРНИП {LEGAL.ogrnip} ·{' '}
+            <a className="underline-offset-4 hover:text-text hover:underline" href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a> · {LEGAL.address}
           </p>
-          <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
-            <a className="underline-offset-4 hover:text-text hover:underline" href={`mailto:${LEGAL.email}`}>{LEGAL.email}</a>
+          <p className="mt-1">
             <a className="underline-offset-4 hover:text-text hover:underline" href={LINKS.support} target="_blank" rel="noopener">
               {COPY.footer.support}: {LEGAL.supportTelegram}
             </a>
-            <a className="underline underline-offset-4 hover:text-text" href={LINKS.offer} target="_blank" rel="noopener">
-              {COPY.footer.offer}
-            </a>
-            <a className="underline underline-offset-4 hover:text-text" href="/privacy/">
-              {COPY.footer.privacy}
-            </a>
           </p>
+          <nav aria-label={COPY.footer.docs} className="mt-3">
+            <ul className="flex flex-wrap gap-x-4 gap-y-1">
+              {DOCUMENTS.map((d) => (
+                <li key={d.path}>
+                  <a className={linkCls} href={d.path}>{d.short}</a>
+                </li>
+              ))}
+              <li>
+                <button type="button" className={`${linkCls} cursor-pointer`} onClick={openCookieSettings}>
+                  {COPY.footer.cookieSettings}
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
         <p className="text-sm text-muted">© {new Date().getFullYear()} {COPY.footer.rights}</p>
       </div>

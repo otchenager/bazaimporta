@@ -1,9 +1,10 @@
-// Яндекс Метрика: счётчик подключает /metrika.js (public/metrika.js, тег в index.html).
-// Без счётчика (не боевой домен, блокировщик) функции молча ничего не делают: клик по CTA всё равно уводит в Telegram.
+// Яндекс Метрика: счётчик подключает /metrika.js (public/metrika.js, тег в index.html) — только после согласия на аналитику.
+// Без счётчика (нет согласия, не боевой домен, блокировщик) функции молча ничего не делают: клик по CTA всё равно уводит в Telegram.
+// До согласия цели и хиты не копятся в очередь: их просто нет. После отзыва (BAZA_YM_OFF) — тоже.
 export const YM_ID = 113396195
 
 function ym(...args) {
-  if (typeof window === 'undefined' || typeof window.ym !== 'function' || !window.BAZA_YM_ID) return
+  if (typeof window === 'undefined' || typeof window.ym !== 'function' || !window.BAZA_YM_ID || window.BAZA_YM_OFF) return
   try {
     window.ym(YM_ID, ...args)
   } catch {
