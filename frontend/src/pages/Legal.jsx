@@ -4,7 +4,7 @@ import Header from '../components/Header.jsx'
 import Footer from '../components/Footer.jsx'
 import { COPY } from '../content/copy.js'
 import { PATHS } from '../legal/documents.js'
-import { EDITION, SITE_URL } from '../legal/requisites.js'
+import { APP_SITE_URL, EDITION, SITE_URL } from '../legal/requisites.js'
 import { openCookieSettings } from '../lib/consent.js'
 
 /** Подряд идущие строки «— …» собираются в один список, остальные — абзацы; порядок сохраняется. */
@@ -18,12 +18,14 @@ function blocks(lines) {
   return out
 }
 
-// Ссылки на страницы сайта и email в тексте документа → кликабельные. Точка или запятая в конце — не часть ссылки.
-const LINK_RE = new RegExp(`(${SITE_URL.replace(/[.]/g, '\\.')}[^\\s,;)»]*[^\\s,;.)»]|[\\w.+-]+@[\\w-]+\\.[\\w.-]*\\w)`, 'g')
+// Ссылки на страницы сайта и приложения и email в тексте документа → кликабельные. Точка или запятая в конце — не часть ссылки.
+const esc = (u) => u.replace(/[.]/g, '\\.')
+const LINK_RE = new RegExp(`((?:${esc(SITE_URL)}|${esc(APP_SITE_URL)})[^\\s,;)»]*[^\\s,;.)»]|[\\w.+-]+@[\\w-]+\\.[\\w.-]*\\w)`, 'g')
 function linkify(text) {
   return text.split(LINK_RE).map((part, i) => {
     if (i % 2 === 0) return part
     if (part.includes('@')) return <a key={i} href={`mailto:${part}`}>{part}</a>
+    if (part.startsWith(APP_SITE_URL)) return <a key={i} href={part}>{part}</a>
     return <a key={i} href={part.slice(SITE_URL.length) || '/'}>{part}</a>
   })
 }
@@ -63,6 +65,31 @@ export default function Legal({ doc }) {
           {doc.sections.map((s, i) => (
             <section key={s.h || i} id={s.h ? anchor(i) : undefined} className="scroll-mt-24">
               {s.h && <h2 className="text-xl md:text-2xl">{s.h}</h2>}
+              {s.table && (
+                <div className="mt-3 overflow-x-auto">
+                  <table className="w-full border-y border-line text-left">
+                    {/* первая строка — заголовки; пустые (таблица реквизитов в оферте) не выводим */}
+                    {s.table[0].some(Boolean) && (
+                      <thead>
+                        <tr>
+                          {s.table[0].map((c, j) => (
+                            <th key={j} scope="col" className="py-2.5 pr-4 align-top font-semibold">{c}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                    )}
+                    <tbody className="divide-y divide-line border-t border-line">
+                      {s.table.slice(1).map((row) => (
+                        <tr key={row.join('|')}>
+                          {row.map((c, j) => (
+                            <td key={j} className={`py-2.5 pr-4 align-top ${j === 0 ? 'w-[38%] hyphens-auto text-text' : '[overflow-wrap:anywhere] text-muted'}`}>{linkify(c)}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
               {s.rows && (
                 <dl className="mt-3 divide-y divide-line border-y border-line">
                   {s.rows.map(([k, v]) => (

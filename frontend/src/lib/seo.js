@@ -63,7 +63,7 @@ export function headHtml(pathname) {
         url: SITE_URL,
         logo: `${SITE_URL}/favicon.svg`,
         sameAs: [LINKS.channel],
-        legalName: LEGAL.entityName,
+        legalName: LEGAL.entity,
         taxID: LEGAL.inn,
         identifier: { '@type': 'PropertyValue', propertyID: 'ОГРНИП', value: LEGAL.ogrnip },
         email: LEGAL.email,

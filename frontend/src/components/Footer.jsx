@@ -23,7 +23,7 @@ export default function Footer() {
           <p className="mb-1 font-semibold text-text">{COPY.footer.official}</p>
           {/* реквизиты исполнителя — src/legal/requisites.js */}
           <p className="text-xs [overflow-wrap:anywhere]">
-            {LEGAL.entityName} · ИНН {LEGAL.inn} · ОГРНИП {LEGAL.ogrnip} ·{' '}
+            {LEGAL.entity} · ИНН {LEGAL.inn} · ОГРНИП {LEGAL.ogrnip} ·{' '}
             {LEGAL.email} · {LEGAL.address}
           </p>
           <nav aria-label={COPY.footer.docs} className="mt-3">

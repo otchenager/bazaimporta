@@ -20,7 +20,11 @@ export function readConsent() {
 export function saveConsent({ analytics, marketing }) {
   const prev = readConsent()
   const secure = location.protocol === 'https:' ? '; Secure' : ''
-  document.cookie = `${CONSENT_COOKIE}=${CONSENT_VERSION}:a${analytics ? 1 : 0}m${marketing ? 1 : 0}; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${secure}`
+  // на *.bazaimporta.ru — общая с приложением app.bazaimporta.ru (тот же формат и версия, см. web/src/cookies.js приложения);
+  // прежнюю cookie без Domain убираем, иначе она читается первой и выбор не находится
+  const shared = /(^|\.)bazaimporta\.ru$/.test(location.hostname) ? '; Domain=.bazaimporta.ru' : ''
+  if (shared) document.cookie = `${CONSENT_COOKIE}=; Max-Age=0; Path=/`
+  document.cookie = `${CONSENT_COOKIE}=${CONSENT_VERSION}:a${analytics ? 1 : 0}m${marketing ? 1 : 0}; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${shared}${secure}`
   if (analytics) startAnalytics()
   else if (prev?.analytics || window.BAZA_YM_ID) stopAnalytics()
 }
