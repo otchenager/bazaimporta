@@ -4,8 +4,7 @@ import { COPY, LINKS } from '../content/copy.js'
 
 /**
  * Липкая кнопка на мобильных. Появляется, когда hero ушёл с экрана,
- * и прячется, пока виден финальный CTA (чтобы не было двух одинаковых кнопок)
- * и пока на экране лид-форма (не закрывает поля и кнопку отправки).
+ * и прячется, пока виден финальный CTA (чтобы не было двух одинаковых кнопок).
  */
 export default function StickyCta({ track }) {
   const [hidden, setHidden] = useState(true)
@@ -13,23 +12,19 @@ export default function StickyCta({ track }) {
   useEffect(() => {
     const hero = document.getElementById('hero')
     const final = document.getElementById('final')
-    const lead = document.getElementById('lead')
     if (!hero) return
     let heroVisible = true
     let finalVisible = false
-    let leadVisible = false
-    const sync = () => setHidden(heroVisible || finalVisible || leadVisible)
+    const sync = () => setHidden(heroVisible || finalVisible)
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
         if (e.target === hero) heroVisible = e.isIntersecting
         if (e.target === final) finalVisible = e.isIntersecting
-        if (e.target === lead) leadVisible = e.isIntersecting
       }
       sync()
     })
     io.observe(hero)
     if (final) io.observe(final)
-    if (lead) io.observe(lead)
     return () => io.disconnect()
   }, [])
 
@@ -40,11 +35,11 @@ export default function StickyCta({ track }) {
       aria-hidden={hidden}
     >
       {track ? (
-        <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="w-full" tabIndex={hidden ? -1 : 0}>
+        <CtaButton href={LINKS.app} goal={`cta_exclusive_${track.id}`} className="w-full" tabIndex={hidden ? -1 : 0}>
           {COPY.exclusive.cta}
         </CtaButton>
       ) : (
-        <CtaButton href={LINKS.boris} goal="cta_sticky" className="w-full" tabIndex={hidden ? -1 : 0}>
+        <CtaButton href={LINKS.app} goal="cta_sticky" className="w-full" tabIndex={hidden ? -1 : 0}>
           {COPY.sticky.cta}
         </CtaButton>
       )}

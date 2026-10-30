@@ -20,7 +20,7 @@ function useRouteHits() {
   }, [pathname, search])
 }
 
-// Оплата идёт через бота @bazaimporta_bot (Robokassa), поэтому страницы /payment нет.
+// Оплата идёт в веб-приложении app.bazaimporta.ru (Robokassa), поэтому страницы /payment нет.
 export default function App() {
   useRouteHits()
   // Эффект родителя срабатывает после эффектов детей: Reveal уже отметил видимое — теперь можно включить анимации

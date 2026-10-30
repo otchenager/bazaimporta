@@ -335,7 +335,7 @@ export const OFERTA = {
         `${R.entityName}`,
         `ИНН ${R.inn} · ОГРНИП ${R.ogrnip}`,
         `Адрес: ${R.address}`,
-        `Телефон: ${R.phone} · Электронная почта: ${R.email} · Поддержка в Telegram: ${R.supportTelegram}`,
+        `Электронная почта: ${R.email} · Поддержка в Telegram: ${R.supportTelegram}`,
       ],
     },
   ],
@@ -442,7 +442,6 @@ export const REKVIZITY = {
     {
       h: 'Контакты',
       rows: [
-        ['Телефон', R.phone],
         ['Электронная почта', R.email],
         ['Поддержка в Telegram', R.supportTelegram],
         ['Оплата доступа', `${OFFER.bot}, через ${OFFER.payment}`],

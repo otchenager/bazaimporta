@@ -1,8 +1,8 @@
 import { track } from '../lib/analytics.js'
 import Icon from './Icon.jsx'
 
-/** Внешняя CTA-ссылка в Telegram. Работает и без JS: это обычный <a>. */
-export default function CtaButton({ href, goal, children, variant = 'primary', icon = 'telegram', className = '', ...rest }) {
+/** Внешняя CTA-ссылка (веб-приложение app.bazaimporta.ru). Работает и без JS: это обычный <a>. */
+export default function CtaButton({ href, goal, children, variant = 'primary', icon = 'arrow', className = '', ...rest }) {
   return (
     <a
       href={href}

@@ -1,8 +1,6 @@
 import CtaButton from '../components/CtaButton.jsx'
-import Icon from '../components/Icon.jsx'
 import HeroVideo from '../visual/HeroVideo.jsx'
 import { COPY, LINKS } from '../content/copy.js'
-import { track as reachGoal } from '../lib/analytics.js'
 
 export default function Hero({ track }) {
   const h = COPY.hero
@@ -34,26 +32,20 @@ export default function Hero({ track }) {
           )}
           <div className="mt-6 flex flex-col gap-3 sm:mt-8 sm:flex-row sm:items-center">
             {track ? (
-              <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="w-full sm:w-auto">
+              <CtaButton href={LINKS.app} goal={`cta_exclusive_${track.id}`} className="w-full sm:w-auto">
                 {COPY.exclusive.cta}
               </CtaButton>
             ) : (
-              <CtaButton href={LINKS.boris} goal="cta_hero" className="w-full sm:w-auto">
+              <CtaButton href={LINKS.app} goal="cta_hero" className="w-full sm:w-auto">
                 {h.cta}
               </CtaButton>
             )}
-            {/* вторичная кнопка — к лид-форме (плавный скролл: scroll-behavior в index.css) */}
-            <a href="#lead" className="btn btn-ghost w-full sm:w-auto" data-goal="lead_cta_hero" onClick={() => reachGoal('lead_cta_hero')}>
-              <span>{h.consult}</span>
-              <Icon name="down" size={18} className="arrow" />
-            </a>
           </div>
         </div>
 
         {/* на телефоне видео — под заголовком и кнопками: оффер и CTA остаются в первом экране и читаются без подложки */}
         <HeroVideo
           alt={h.videoAlt}
-          film={h.film}
           pauseLabel={h.pauseLabel}
           playLabel={h.playLabel}
           className="aspect-video lg:col-span-5 lg:aspect-[4/3] xl:aspect-[16/11]"

@@ -6,7 +6,7 @@ import { COPY, LINKS } from '../content/copy.js'
 import { mediaProps } from '../lib/media.js'
 import useCarousel from '../lib/useCarousel.js'
 
-/** Карусель превью из закрытого канала: свайп — нативный scroll-snap, стрелки листают по одному кадру. */
+/** Карусель превью из курса полного доступа: свайп — нативный scroll-snap, стрелки листают по одному кадру. */
 export function ProgramCarousel() {
   const p = COPY.program
   const { ref: track, edge, step } = useCarousel(12)
@@ -18,7 +18,7 @@ export function ProgramCarousel() {
           <li key={s.img} className="w-[86%] shrink-0">
             <figure>
               <div className="overflow-hidden rounded-xl border border-line bg-black">
-                <img {...mediaProps(s.img, '(max-width: 1024px) 80vw, 480px', [2, 1])} alt={s.img === "markets" ? "Страница текстового разбора рынков" : "Кадр из видеоурока закрытого канала"} loading="lazy" decoding="async" className="aspect-[2/1] w-full object-cover" />
+                <img {...mediaProps(s.img, '(max-width: 1024px) 80vw, 480px', [2, 1])} alt={s.img === "markets" ? "Страница текстового разбора рынков" : "Кадр из видеоурока курса"} loading="lazy" decoding="async" className="aspect-[2/1] w-full object-cover" />
               </div>
               <figcaption className="mt-3 text-base leading-snug text-text/85">{s.caption}</figcaption>
             </figure>
@@ -33,7 +33,7 @@ export function ProgramCarousel() {
   )
 }
 
-/** Блок 444: что внутри закрытого канала — список и цена. Карусель стоит рядом с дорожной картой (TrackDetail). */
+/** Блок 444: что внутри полного доступа — список и цена. Карусель стоит рядом с дорожной картой (TrackDetail). */
 export default function ProgramDetails({ track }) {
   const p = COPY.program
   return (
@@ -65,7 +65,7 @@ export default function ProgramDetails({ track }) {
             </span>
           </p>
         </div>
-        <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="w-full md:w-auto">
+        <CtaButton href={LINKS.app} goal={`cta_exclusive_${track.id}`} className="w-full md:w-auto">
           {COPY.exclusive.cta}
         </CtaButton>
       </Reveal>

@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from '../components/Icon.jsx'
-import { hasValue } from '../components/Todo.jsx'
-import { isTodo } from '../content/copy.js'
-import { track } from '../lib/analytics.js'
 import MEDIA from './hero-media.json'
 
 // Фоновый луп в hero вместо 3D-модели. Файлы — public/media (scripts/hero-video.mjs), мимо сборки;
@@ -14,7 +11,7 @@ function pickSize() {
   return window.matchMedia('(min-width: 768px)').matches ? 720 : 540
 }
 
-export default function HeroVideo({ alt, film, pauseLabel, playLabel, className = '' }) {
+export default function HeroVideo({ alt, pauseLabel, playLabel, className = '' }) {
   const box = useRef(null)
   const video = useRef(null)
   const [enabled, setEnabled] = useState(false)
@@ -66,7 +63,6 @@ export default function HeroVideo({ alt, film, pauseLabel, playLabel, className 
     else v.pause()
   }
 
-  const showFilm = hasValue(film?.url)
   return (
     <div ref={box} className={`hero-video ${className}`} data-playing={playing}>
       <picture>
@@ -85,29 +81,11 @@ export default function HeroVideo({ alt, film, pauseLabel, playLabel, className 
         disablePictureInPicture
         onPlaying={() => setPlaying(true)}
       />
-      {(showFilm || enabled) && (
+      {enabled && (
         <div className="hero-video-ui">
-          {showFilm && (
-            <a
-              href={isTodo(film.url) ? '#' : film.url}
-              target="_blank"
-              rel="noopener"
-              className="hero-film"
-              data-goal="hero_film"
-              onClick={() => track('hero_film')}
-            >
-              <span className="play">
-                <Icon name="play" size={14} />
-              </span>
-              {film.label}
-              <span className="text-muted">· {film.meta}</span>
-            </a>
-          )}
-          {enabled && (
-            <button type="button" className="hero-pause" onClick={toggle} aria-label={paused ? playLabel : pauseLabel}>
-              <Icon name={paused ? 'play' : 'pause'} size={16} />
-            </button>
-          )}
+          <button type="button" className="hero-pause" onClick={toggle} aria-label={paused ? playLabel : pauseLabel}>
+            <Icon name={paused ? 'play' : 'pause'} size={16} />
+          </button>
         </div>
       )}
     </div>

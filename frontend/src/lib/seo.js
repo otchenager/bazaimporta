@@ -7,7 +7,7 @@ export const SITE_URL = 'https://bazaimporta.ru'
 
 const HOME = {
   title: 'BAZA Import — клуб импортёров авто из Кореи, Китая, Японии',
-  description: 'Привози авто из-за границы без переплат: свои поставщики, наставник и 200+ привезённых машин. Вход в канал бесплатный.',
+  description: 'Привози авто из-за границы без переплат: свои поставщики, наставник и 200+ привезённых машин. Вход в клуб бесплатный.',
 }
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
@@ -67,7 +67,6 @@ export function headHtml(pathname) {
         taxID: LEGAL.inn,
         identifier: { '@type': 'PropertyValue', propertyID: 'ОГРНИП', value: LEGAL.ogrnip },
         email: LEGAL.email,
-        telephone: LEGAL.phoneE164,
       }),
       jsonLd({
         '@context': 'https://schema.org',

@@ -1,16 +1,14 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo.jsx'
-import Icon from './Icon.jsx'
-import PhoneLink from './PhoneLink.jsx'
-import { COPY, LEGAL } from '../content/copy.js'
-import { track as reachGoal } from '../lib/analytics.js'
+import CtaButton from './CtaButton.jsx'
+import { COPY, LINKS } from '../content/copy.js'
 import { TRACKS } from '../content/tracks.js'
 
 /**
  * Шапка: логотип, треки (с md — в строке), CTA. На телефоне треки — вкладки под шапкой: три пункта помещаются
  * без бургера и видны сразу; вкладки не липкие, чтобы липкая шапка оставалась низкой (64 px) во встроенном браузере Telegram.
  */
-export default function Header({ track, leadHref = '#lead' }) {
+export default function Header({ track }) {
   const activeSlug = track?.slug
   return (
     <>
@@ -33,27 +31,10 @@ export default function Header({ track, leadHref = '#lead' }) {
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-1 lg:gap-5">
-          {/* номер: с 1024 px — текстом рядом с CTA, тише кнопки; на телефоне — трубка 44×44 */}
-          <PhoneLink
-            aria-label={`Позвонить: ${LEGAL.phone}`}
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-md text-muted transition-colors hover:text-text lg:hidden"
-          >
-            <Icon name="phone" size={22} />
-          </PhoneLink>
-          <PhoneLink className="hidden whitespace-nowrap rounded text-sm font-semibold tabular-nums text-muted transition-colors hover:text-text lg:inline" />
-          {/* справа — к лид-форме внизу страницы (на юридических страницах формы нет — ведём на главную) */}
-          <a
-            href={leadHref}
-            data-goal="lead_cta_header"
-            onClick={() => reachGoal('lead_cta_header')}
-            className="btn btn-primary !min-h-11 !gap-2 !px-3 !text-sm sm:!px-4"
-          >
-            <span className="sm:hidden">{COPY.header.leadShort}</span>
-            <span className="max-sm:hidden">{COPY.header.lead}</span>
-            <Icon name="down" size={18} className="shrink-0" />
-          </a>
-        </div>
+        {/* справа — регистрация в веб-приложении */}
+        <CtaButton href={LINKS.app} goal={track ? `cta_exclusive_${track.id}` : 'cta_header'} className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
+          {COPY.header.cta}
+        </CtaButton>
       </div>
     </header>
     <nav aria-label="Треки" className="border-b border-line bg-bg md:hidden">

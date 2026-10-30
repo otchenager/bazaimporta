@@ -31,7 +31,7 @@ export default function Pricing({ track }) {
             <p className="num mt-3 text-5xl">{p.free.price}</p>
             <List items={p.free.items} />
             <span className="block h-8" aria-hidden="true" />
-            <CtaButton href={LINKS.channel} goal="cta_pricing_free" variant="ghost" className="mt-auto">
+            <CtaButton href={LINKS.app} goal="cta_pricing_free" variant="ghost" className="mt-auto">
               {track ? p.free.ctaTrack : p.free.cta}
             </CtaButton>
           </Reveal>
@@ -43,7 +43,7 @@ export default function Pricing({ track }) {
               <Todo value={p.paid.period} className="text-muted" />
             </p>
             <List items={p.paid.items} />
-            <CtaButton href={LINKS.paidBot} goal="cta_paid" icon="lock" className="mt-8">
+            <CtaButton href={LINKS.app} goal="cta_paid" icon="lock" className="mt-8">
               {p.paid.cta}
             </CtaButton>
             <p className="mt-3 text-muted">{p.paid.note}</p>

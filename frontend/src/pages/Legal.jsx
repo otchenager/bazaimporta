@@ -35,7 +35,7 @@ export default function Legal({ doc }) {
   const toc = doc.sections.filter((s) => s.h)
   return (
     <>
-      <Header leadHref="/#lead" />
+      <Header />
       <main id="main" className="mx-auto max-w-3xl px-4 py-12 sm:px-8 md:py-20">
         <h1 className="h-section [overflow-wrap:anywhere]">{doc.title}</h1>
         <p className="mt-4 text-sm text-muted">

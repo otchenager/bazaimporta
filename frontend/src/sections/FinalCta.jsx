@@ -12,11 +12,11 @@ export default function FinalCta({ track }) {
           <h2 className="h-display">{f.title}</h2>
           <p className="mt-5 text-lg text-muted sm:text-xl">{f.sub}</p>
           {track ? (
-            <CtaButton href={LINKS.boris} goal={`cta_exclusive_${track.id}`} className="mt-8 w-full sm:w-auto">
+            <CtaButton href={LINKS.app} goal={`cta_exclusive_${track.id}`} className="mt-8 w-full sm:w-auto">
               {COPY.exclusive.cta}
             </CtaButton>
           ) : (
-            <CtaButton href={LINKS.boris} goal="cta_final" className="mt-8 w-full sm:w-auto">
+            <CtaButton href={LINKS.app} goal="cta_final" className="mt-8 w-full sm:w-auto">
               {f.cta}
             </CtaButton>
           )}
