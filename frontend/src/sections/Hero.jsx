@@ -40,6 +40,10 @@ export default function Hero({ track }) {
                 {h.cta}
               </CtaButton>
             )}
+            <p className="flex items-center justify-center gap-2 font-semibold text-accent sm:justify-start">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+              {h.freeNote}
+            </p>
           </div>
         </div>
 
