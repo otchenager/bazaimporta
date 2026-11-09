@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom'
 import Logo from './Logo.jsx'
 import CtaButton from './CtaButton.jsx'
-import { COPY, LINKS } from '../content/copy.js'
+import Icon from './Icon.jsx'
+import { CONTACT, COPY, LINKS } from '../content/copy.js'
+import { track as trackGoal } from '../lib/analytics.js'
 import { TRACKS } from '../content/tracks.js'
 
 /**
  * Шапка: логотип, треки (с md — в строке), CTA. На телефоне треки — вкладки под шапкой: три пункта помещаются
  * без бургера и видны сразу; вкладки не липкие, чтобы липкая шапка оставалась низкой (64 px) во встроенном браузере Telegram.
+ * Слева от CTA — номер для звонков: с lg трубка и номер текстом, уже — круглая кнопка-трубка (номер целиком не помещается).
  */
 export default function Header({ track }) {
   const activeSlug = track?.slug
@@ -31,10 +34,22 @@ export default function Header({ track }) {
             </Link>
           ))}
         </nav>
-        {/* справа — регистрация в веб-приложении */}
-        <CtaButton href={LINKS.app} goal={track ? `cta_exclusive_${track.id}` : 'cta_header'} className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
-          {COPY.header.cta}
-        </CtaButton>
+        {/* справа — звонок и регистрация в веб-приложении */}
+        <div className="flex shrink-0 items-center gap-2 lg:gap-4">
+          <a
+            href={`tel:${CONTACT.tel}`}
+            onClick={() => trackGoal('phone_header')}
+            data-goal="phone_header"
+            aria-label={`Позвонить: ${CONTACT.phone}`}
+            className="flex size-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-line text-sm font-semibold text-muted transition-colors hover:border-accent hover:text-accent focus-visible:text-accent lg:size-auto lg:rounded-md lg:border-0 lg:px-2 lg:py-2"
+          >
+            <Icon name="phone" size={18} />
+            <span className="hidden tabular-nums lg:inline">{CONTACT.phone}</span>
+          </a>
+          <CtaButton href={LINKS.app} goal={track ? `cta_exclusive_${track.id}` : 'cta_header'} className="!min-h-11 !gap-2 !px-3 !text-sm sm:!px-4">
+            {COPY.header.cta}
+          </CtaButton>
+        </div>
       </div>
     </header>
     <nav aria-label="Треки" className="border-b border-line bg-bg md:hidden">
