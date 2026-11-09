@@ -16,6 +16,9 @@ export const LINKS = {
   offer: '/oferta/',
 }
 
+// Номер для звонков — в шапке (ссылка tel:). Номер в юридических документах другой: REQUISITES.phone
+export const CONTACT = { phone: '+7 968 399-39-06', tel: '+79683993906' }
+
 // Реквизиты — единственный источник src/legal/requisites.js (там же плейсхолдеры для владельца)
 export const LEGAL = REQUISITES
 
